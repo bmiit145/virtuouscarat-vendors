@@ -19,13 +19,6 @@ use Automattic\WooCommerce\Client;
 class OrderController extends Controller
 {
 
-    protected $wooCommerce;
-
-    public function __construct(Client $woocommerce)
-    {
-        $this->wooCommerce = $woocommerce;
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -343,8 +336,7 @@ class OrderController extends Controller
         }
         if ($request->status == 3 || $request->status == 5) {
             // call woocommerce helper function to update order status
-            $woocommerce = app(Client::class);
-            updateOrderStatusInWooCommerce($woocommerce, $request->order_id, $request->status);
+            updateOrderStatusInWooCommerce($request->order_id, $status_woocommerce);
         }
 
         if($status){
