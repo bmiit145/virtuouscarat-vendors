@@ -91,9 +91,9 @@
                         @elseif($order->fullfilled_status == 1)
                             <span class="badge badge-secondary">Processed by Admin </span>
                         @elseif($order->fullfilled_status == 4)
-                            <span class="badge badge-danger">Rejected by Admin</span>
+                            <span class="badge badge-warning">Rejected by Admin</span>
                         @elseif($order->fullfilled_status == 5)
-                            <span class="badge badge-warning">Rejected</span>
+                            <span class="badge badge-danger">Rejected</span>
                         @else
                             <span class="badge badge-dark ">Not Fullfilled</span>
                         @endif
