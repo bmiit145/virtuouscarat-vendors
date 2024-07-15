@@ -43,7 +43,7 @@
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
-                    
+
                     </div>
                     <div class="form-group">
                         <div class="form-check">
@@ -58,11 +58,11 @@
                       Login
                     </button>
                   </form>
-                    <a class="btn btn-link small" href="{{ ('login.register') }}">
+                    <a class="btn btn-link small" href="{{ route('login.register') }}">
                             {{ __('signup') }}
                         </a>
                   <hr>
-                   
+
                   <div class="text-center">
                     @if (Route::has('password.request'))
                         <a class="btn btn-link small" href="{{ route('password.request') }}">

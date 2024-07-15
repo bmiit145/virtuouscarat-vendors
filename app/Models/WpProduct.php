@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\User;
+use App\Models\Category;
 
 class WpProduct extends Model
 {
@@ -12,6 +13,7 @@ class WpProduct extends Model
     // Define the fillable attributes for mass assignment
     protected $fillable = [
         'name',
+        'wp_product_id',
         'description',
         'short_description',
         'regular_price',
@@ -22,8 +24,9 @@ class WpProduct extends Model
         'main_photo',
         'photo_gallery',
         'category_id',
+        'vendor_id',
         'quantity',
-        'vendor_id'
+        'document_number',
     ];
 
     public function category()
@@ -45,11 +48,13 @@ class WpProduct extends Model
         return $this->belongsTo(User::class, 'vendor_id');
     }
 
+    public  function orderProduct(){
+        return $this->hasMany(WpOrderProduct::class, 'product_id', 'wp_product_id');
+    }
 
     public static function getAllProduct(){
-//        return WpProduct::with(['attributes','vendor' , 'category'])->orderBy('id','desc')->paginate(10);
-        // show only product whose vendor_id is equal to the logged in user id
-        return WpProduct::with(['attributes','vendor' , 'category'])->where('vendor_id', auth()->id())->orderBy('id','desc')->paginate(10);
+        return WpProduct::with(['attributes',  'vendor' , 'category'])->orderBy('id','desc')->paginate(10);
     }
+
 
 }

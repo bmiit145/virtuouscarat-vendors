@@ -63,7 +63,7 @@ class LoginController extends Controller
         // dd($provider);
         return Socialite::driver($provider)->redirect();
     }
- 
+
     public function Callback($provider)
     {
         $userSocial =   Socialite::driver($provider)->stateless()->user();
@@ -88,18 +88,18 @@ class LoginController extends Controller
     {
         return view('auth.register');
     }
-    
+
     public function storeRegister(Request $request)
     {
-       
+
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
-        $user->role = 'admin';
+        $user->role = 'user';
         $user->save();
         return redirect('login');
-      
-        
+
+
     }
 }

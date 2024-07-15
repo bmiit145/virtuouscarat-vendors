@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\WpOrder;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Order;
@@ -12,9 +13,19 @@ use Notification;
 use Helper;
 use Illuminate\Support\Str;
 use App\Notifications\StatusNotification;
+use App\Helpers\woocommerce_helper;
+use Automattic\WooCommerce\Client;
 
 class OrderController extends Controller
 {
+
+    protected $wooCommerce;
+
+    public function __construct(Client $woocommerce)
+    {
+        $this->wooCommerce = $woocommerce;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -22,7 +33,10 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders=Order::orderBy('id','DESC')->paginate(10);
+        $orders=WpOrder::whereHas('products.product' , function($query){
+            $query->where('vendor_id',auth()->user()->id);
+        })
+        ->orderBy('id','DESC')->paginate(10);
         return view('backend.order.index')->with('orders',$orders);
     }
 
@@ -135,7 +149,7 @@ class OrderController extends Controller
         } else {
             $order_data['payment_method'] = 'cod';
             $order_data['payment_status'] = 'Unpaid';
-        }        
+        }
         $order->fill($order_data);
         $status=$order->save();
         if($order)
@@ -156,7 +170,7 @@ class OrderController extends Controller
         }
         Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
 
-        // dd($users);        
+        // dd($users);
         request()->session()->flash('success','Your product order has been placed. Thank you for shopping with us.');
         return redirect()->route('home');
     }
@@ -169,7 +183,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order=Order::find($id);
+        $order=WpOrder::find($id);
         // return $order;
         return view('backend.order.show')->with('order',$order);
     }
@@ -260,17 +274,17 @@ class OrderController extends Controller
             elseif($order->status=="process"){
                 request()->session()->flash('success','Your order is currently processing.');
                 return redirect()->route('home');
-    
+
             }
             elseif($order->status=="delivered"){
                 request()->session()->flash('success','Your order has been delivered. Thank you for shopping with us.');
                 return redirect()->route('home');
-    
+
             }
             else{
                 request()->session()->flash('error','Sorry, your order has been canceled.');
                 return redirect()->route('home');
-    
+
             }
         }
         else{
@@ -313,5 +327,31 @@ class OrderController extends Controller
             $data[$monthName] = (!empty($result[$i]))? number_format((float)($result[$i]), 2, '.', '') : 0.0;
         }
         return $data;
+    }
+
+
+    // update order Status
+    public function updateStatus(Request $request){
+        $order=WpOrder::where('order_id' , $request->order_id)->first();
+        $order->fullfilled_status=$request->status;
+        $status=$order->save();
+
+        if($request->status == 3){
+             $status_woocommerce = 'completed';
+        }else{
+            $status_woocommerce = 'cancelled';
+        }
+        if ($request->status == 3 || $request->status == 5) {
+            // call woocommerce helper function to update order status
+            $woocommerce = app(Client::class);
+            updateOrderStatusInWooCommerce($woocommerce, $request->order_id, $request->status);
+        }
+
+        if($status){
+            return response()->json(['status'=>'success','message'=>'Order status updated successfully']);
+        }
+        else{
+            return response()->json(['status'=>'error','message'=>'Error while updating order status']);
+        }
     }
 }
