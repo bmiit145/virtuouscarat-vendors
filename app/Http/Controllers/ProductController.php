@@ -72,7 +72,6 @@ class ProductController extends Controller
         $items=WpProduct::where('id',$id)->get();
         // return $items;
         return view('backend.product.edit')->with('product',$product)
-                    // ->with('brands',$brand)
                     ->with('categories',$category)
                     ->with('items',$items);
     }

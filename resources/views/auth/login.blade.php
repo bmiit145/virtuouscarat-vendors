@@ -58,7 +58,7 @@
                       Login
                     </button>
                   </form>
-                    <a class="btn btn-link small" href="{{ url('register') }}">
+                    <a class="btn btn-link small" href="{{ ('login.register') }}">
                             {{ __('signup') }}
                         </a>
                   <hr>

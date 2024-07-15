@@ -1,5 +1,23 @@
-<ul class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion" id="accordionSidebar">
+<style>
+    .nav-item.active .nav-link {
+    color: #fff;
+    background-color: #233766;
+}
 
+.collapse-item.active {
+  color: #007bff; /* Change the color to blue */
+  font-weight: bold; /* Make the text bold */
+}
+
+.bg-gradient-info {
+    background-color: #132644 !important;
+    background-size: cover;
+}
+
+</style>
+
+<ul class="text navbar-nav bg-gradient-info sidebar sidebar-dark accordion" id="accordionSidebar">
+    
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin')}}">
       <div class="sidebar-brand-icon rotate-n-15">
@@ -12,10 +30,11 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
-      <a class="nav-link" href="{{route('admin')}}">
+    <li class="nav-item {{ request()->routeIs('admin') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('admin') }}">
         <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span>Dashboard</span></a>
+        <span>Dashboard</span>
+      </a>
     </li>
 
     <!-- Divider -->
@@ -70,18 +89,18 @@
 {{--        </div>--}}
 {{--    </li>--}}
     {{-- Products --}}
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#productCollapse" aria-expanded="true" aria-controls="productCollapse">
-          <i class="fas fa-cubes"></i>
-          <span>Products</span>
-        </a>
-        <div id="productCollapse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Product Options:</h6>
-            <a class="collapse-item" href="{{route('product.index')}}">Products</a>
-            <a class="collapse-item" href="{{route('product.create')}}">Add Product</a>
-          </div>
+    <li class="nav-item {{ request()->routeIs('product.index') || request()->routeIs('product.create') ? 'active' : '' }}">
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#productCollapse" aria-expanded="true" aria-controls="productCollapse">
+        <i class="fas fa-cubes"></i>
+        <span>Products</span>
+      </a>
+      <div id="productCollapse" class="collapse {{ request()->routeIs('product.index') || request()->routeIs('product.create') ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">Product Options:</h6>
+          <a class="collapse-item {{ request()->routeIs('product.index') ? 'active' : '' }}" href="{{ route('product.index') }}">Products</a>
+          <a class="collapse-item {{ request()->routeIs('product.create') ? 'active' : '' }}" href="{{ route('product.create') }}">Add Product</a>
         </div>
+      </div>
     </li>
 
     {{-- Brands --}}
@@ -115,11 +134,11 @@
     </li> --}}
 
     <!--Orders -->
-    <li class="nav-item">
-        <a class="nav-link" href="{{route('order.index')}}">
-            <i class="fas fa-cart-plus"></i>
-            <span>Orders</span>
-        </a>
+    <li class="nav-item {{ request()->routeIs('order.index') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('order.index') }}">
+        <i class="fas fa-cart-plus"></i>
+        <span>Orders</span>
+      </a>
     </li>
 
     <!-- Reviews -->
@@ -211,10 +230,11 @@
             <span>Users</span></a>
     </li> --}}
      <!-- General settings -->
-     <li class="nav-item">
-        <a class="nav-link" href="{{route('settings')}}">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span></a>
+     <li class="nav-item {{ request()->routeIs('settings') ? 'active' : '' }}">
+      <a class="nav-link" href="{{ route('settings') }}">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+      </a>
     </li>
 
     <!-- Sidebar Toggler (Sidebar) -->
@@ -223,3 +243,5 @@
     </div>
 
 </ul>
+
+
