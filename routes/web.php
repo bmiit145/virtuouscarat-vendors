@@ -15,14 +15,15 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register'=>false]);
 
-Route::get('user/login','FrontendController@login')->name('login.form');
+//Route::get('user/login','FrontendController@login')->name('login.form');
 // Route::post('user/login','FrontendController@loginSubmit')->name('login.submit');
-Route::get('user/logout','FrontendController@logout')->name('user.logout');
+//Route::get('user/logout','FrontendController@logout')->name('user.logout');
 
 Route::get('user/register','FrontendController@register')->name('register.form');
 Route::post('user/register','FrontendController@registerSubmit')->name('register.submit');
 // Reset password
 //Route::post('password-reset', 'FrontendController@showResetForm')->name('password.reset');
+
 // Socialite
 Route::get('login/{provider}/', 'Auth\LoginController@redirect')->name('login.redirect');
 Route::get('login/{provider}/callback/', 'Auth\LoginController@Callback')->name('login.callback');
@@ -32,7 +33,10 @@ Route::Post('logout/', 'Auth\LoginController@logout')->name('login.logout');
 Route::get('register/', 'Auth\LoginController@register')->name('login.register');
 Route::post('storeRegister/', 'Auth\LoginController@storeRegister')->name('login.storeRegister');
 
-Route::get('/','FrontendController@home')->name('home');
+//Route::get('/','FrontendController@home')->name('home');
+Route::get('/', function (){
+    return redirect()->route(Auth::user() ? 'admin' : 'login');
+})->name('home');
 
 // Frontend Routes
 Route::get('/home', 'FrontendController@index');
@@ -99,8 +103,9 @@ Route::get('payment/success', 'PayPalController@success')->name('payment.success
 
 // Backend section start
 
-Route::group(['prefix'=>'/admin','middleware'=>['auth']],function(){
+Route::group(['prefix'=>'/admin','middleware'=>['auth' , 'user']],function(){
     Route::get('/','AdminController@index')->name('admin');
+//    Route::get('/','AdminController@index')->name('user');
     Route::get('/file-manager',function(){
         return view('backend.layouts.file-manager');
     })->name('file-manager');
