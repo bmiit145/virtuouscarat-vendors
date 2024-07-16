@@ -10,6 +10,7 @@ use Socialite;
 use App\User;
 use Auth;
 use Hash;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -92,13 +93,38 @@ class LoginController extends Controller
 
     public function storeRegister(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:15',
+            'company_name' => 'nullable|string|max:255',
+            'pincode' => 'required|string|max:6',
+            'state' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'website' => 'nullable|string|max:255',
+            'gst_number' => ['required', 'string', 'regex:/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/'],
+        ]);
+    
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+        $user->phone = $request->phone;
         $user->role = 'user';
+        $user->company_name = $request->company_name;
+        $user->pincode = $request->pincode;
+        $user->state = $request->state;
+        $user->city = $request->city;
+        $user->address = $request->address;
+        $user->website = $request->website;
+        $user->gst_number = $request->gst_number;
         $user->save();
+        
+
         return redirect('login');
     }
 }
