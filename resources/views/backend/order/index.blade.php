@@ -41,7 +41,7 @@
                     <td>{{$order->billing_first_name}} {{$order->billing_last_name}}</td>
                     <td>
                         @foreach($order->products as $product)
-                            @if(!$product->product)
+                            @if(!$product->product || $product->product->vendor_id != Auth::id())
                                 @continue
                             @endif
                             <span>{{  $product->product? $product->product->name : '' }}
@@ -51,7 +51,7 @@
                     </td>
 {{--                    <td>--}}
 {{--                        @foreach($order->products as $product)--}}
-{{--                            @if(!$product->product)--}}
+{{--                            @if(!$product->product || $product->product->vendor_id != Auth::id())--}}
 {{--                                @continue--}}
 {{--                            @endif--}}
 {{--                            <span>{{  $product->product? $product->product->vendor->name : '' }}--}}
@@ -83,19 +83,39 @@
                           <span class="badge badge-danger">{{$order->status}}</span>
                         @endif
                     </td>
+{{--                    <td>--}}
+{{--                        @if($order->fullfilled_status == 3)--}}
+{{--                            <span class="badge badge-success">Fullfilled</span>--}}
+{{--                        @elseif($order->fullfilled_status == 2)--}}
+{{--                            <span class="badge badge-info">Passed to Vendor</span>--}}
+{{--                        @elseif($order->fullfilled_status == 1)--}}
+{{--                            <span class="badge badge-secondary">Processed by Admin </span>--}}
+{{--                        @elseif($order->fullfilled_status == 4)--}}
+{{--                            <span class="badge badge-warning">Rejected by Admin</span>--}}
+{{--                        @elseif($order->fullfilled_status == 5)--}}
+{{--                            <span class="badge badge-danger">Rejected</span>--}}
+{{--                        @else--}}
+{{--                            <span class="badge badge-dark ">Not Fullfilled</span>--}}
+{{--                        @endif--}}
+{{--                    </td>--}}
                     <td>
-                        @if($order->fullfilled_status == 3)
+                        @php
+                        $total_fullfilled_count = $order->products()->whereHas('product' , function($q){
+                            $q->where('vendor_id',Auth::id());
+                        })
+                        ->where('is_fulfilled',1)->count();
+
+                        $total_rejecteded_count = $order->products()->whereHas('product' , function($q){
+                            $q->where('vendor_id',Auth::id());
+                        })
+                        ->where('is_fulfilled',2)->count();
+                        @endphp
+                        @if($total_fullfilled_count > 0)
                             <span class="badge badge-success">Fullfilled</span>
-                        @elseif($order->fullfilled_status == 2)
-                            <span class="badge badge-info">Passed to Vendor</span>
-                        @elseif($order->fullfilled_status == 1)
-                            <span class="badge badge-secondary">Processed by Admin </span>
-                        @elseif($order->fullfilled_status == 4)
-                            <span class="badge badge-warning">Rejected by Admin</span>
-                        @elseif($order->fullfilled_status == 5)
+                        @elseif($total_rejecteded_count > 0)
                             <span class="badge badge-danger">Rejected</span>
                         @else
-                            <span class="badge badge-dark ">Not Fullfilled</span>
+                            <span class="badge badge-warning">Pending</span>
                         @endif
                     </td>
                     <td>

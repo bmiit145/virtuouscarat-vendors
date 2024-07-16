@@ -26,10 +26,13 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders=WpOrder::whereHas('products.product' , function($query){
+        $orders=WpOrder::
+            whereIn('fullfilled_status',[2 , 3 , 5])
+            ->whereHas('products.product' , function($query){
             $query->where('vendor_id',auth()->user()->id);
         })
         ->orderBy('id','DESC')->paginate(10);
+
         return view('backend.order.index')->with('orders',$orders);
     }
 
@@ -325,20 +328,43 @@ class OrderController extends Controller
 
     // update order Status
     public function updateStatus(Request $request){
-        $order=WpOrder::where('order_id' , $request->order_id)->first();
-        $order->fullfilled_status=$request->status;
-        $status=$order->save();
-
         if($request->status == 3){
-             $status_woocommerce = 'completed';
+            $status_woocommerce = 'completed';
+            $product_status = 1;
         }else{
             $status_woocommerce = 'cancelled';
-        }
-        if ($request->status == 3 || $request->status == 5) {
-            // call woocommerce helper function to update order status
-            updateOrderStatusInWooCommerce($request->order_id, $status_woocommerce);
+            $product_status = 2;
         }
 
+        $order=WpOrder::where('order_id' , $request->order_id)->first();
+        //update is_fulfilled to wp_order_products
+        $order->products()->whereHas('product', function($query){
+            $query->where('vendor_id',auth()->user()->id);
+        })->update(['is_fulfilled'=>$product_status]);
+
+        //update order status if all products are fulfilled
+        $total_fullfilled_count = $order->products()->where('is_fulfilled',1)->count() == $order->products->count() ? 1 : 0;
+        $total_cancelled_count = $order->products()->where('is_fulfilled',2)->count() == $order->products->count() ? 1 : 0;
+
+        if ($total_fullfilled_count && $product_status == 1){
+        $order->fullfilled_status=$request->status;
+        $status=$order->save();
+            $res =  updateOrderStatusInWooCommerce($request->order_id, $status_woocommerce);
+        }
+        elseif($total_cancelled_count && $product_status == 2){
+            $order->fullfilled_status=$request->status;
+            $status=$order->save();
+            $res = updateOrderStatusInWooCommerce($request->order_id, $status_woocommerce);
+        }
+        elseif (!$total_fullfilled_count && !$total_cancelled_count){
+            //on hold something
+            $status = 0;
+            $res = updateOrderStatusInWooCommerce($request->order_id, "on-hold");
+        }
+        else{
+            $status = 0;
+            $res =  updateOrderStatusInWooCommerce($request->order_id, "processing");
+        }
         if($status){
             return response()->json(['status'=>'success','message'=>'Order status updated successfully']);
         }
