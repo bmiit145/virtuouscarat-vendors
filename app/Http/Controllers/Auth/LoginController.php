@@ -122,6 +122,7 @@ class LoginController extends Controller
         $user->address = $request->address;
         $user->website = $request->website;
         $user->gst_number = $request->gst_number;
+        $user->status = 'inactive';
         $user->save();
         
 
