@@ -89,19 +89,12 @@
 {{--        </div>--}}
 {{--    </li>--}}
     {{-- Products --}}
-    <li class="nav-item {{ request()->routeIs('product.index') || request()->routeIs('product.create') ? 'active' : '' }}">
-      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#productCollapse" aria-expanded="true" aria-controls="productCollapse">
+    <li class="nav-item {{ request()->is('admin/product*') ? 'active_tab' : '' }}">
+      <a class="nav-link collapsed" href="{{route('product.index')}}">
         <i class="fas fa-cubes"></i>
         <span>Products</span>
       </a>
-      <div id="productCollapse" class="collapse {{ request()->routeIs('product.index') || request()->routeIs('product.create') ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-          <h6 class="collapse-header">Product Options:</h6>
-          <a class="collapse-item {{ request()->routeIs('product.index') ? 'active' : '' }}" href="{{ route('product.index') }}">Products</a>
-          <a class="collapse-item {{ request()->routeIs('product.create') ? 'active' : '' }}" href="{{ route('product.create') }}">Add Product</a>
-        </div>
-      </div>
-    </li>
+  </li>
 
     {{-- Brands --}}
     {{-- <li class="nav-item">
