@@ -21,11 +21,11 @@
               <th>Order No.</th>
               <th>Customer Name</th>
                 <th>Product Name</th>
+                <th>QTY</th>
 {{--                <th>Vendor Name</th>--}}
 {{--              <th>Email</th>--}}
 {{--              <th>Charge</th>--}}
               <th>Order Value</th>
-              <th>Wp Status</th>
                 <th>Status</th>
               <th>Action</th>
             </tr>
@@ -61,28 +61,15 @@
 {{--                    <td>{{$order->billing_email}}</td>--}}
 {{--                    <td>{{$order->products->sum('quantity')}}</td>--}}
 {{--                    <td>@foreach($shipping_charge as $data) $ {{number_format($data,2)}} @endforeach</td>--}}
-                    <td>${{number_format($order->total,2)}}</td>
-                    <td>
-                        @if($order->status=='pending-payment' || $order->status=='pending')
-                          <span class="badge badge-primary">Pending payment</span>
-                        @elseif($order->status=='processing')
-                          <span class="badge badge-warning">Processing</span>
-                        @elseif($order->status=='completed')
-                          <span class="badge badge-success">Completed</span>
-                        @elseif($order->status=='on-hold')
-                          <span class="badge badge-danger">On hold</span>
-                        @elseif($order->status=='failed')
-                          <span class="badge badge-danger">Failed</span>
-                        @elseif($order->status=='draft'|| $order->status=='checkout-draft')
-                          <span class="badge badge-dark">Draft</span>
-                        @elseif($order->status=='canceled')
-                          <span class="badge badge-warning">Canceled</span>
-                        @elseif($order->status=='refunded')
-                          <span class="badge badge-info">Refunded</span>
-                        @else
-                          <span class="badge badge-danger">{{$order->status}}</span>
-                        @endif
-                    </td>
+                    <td>@foreach($order->products as $product)
+                            @if(!$product->product || $product->product->vendor_id != Auth::id())
+                                @continue
+                            @endif
+                            <span>{{  $product->product? $product->quantity : '' }}
+                            </span><br/>
+                        @endforeach
+                      </td>
+                    <td>₹{{number_format($order->total,2)}}</td>
 {{--                    <td>--}}
 {{--                        @if($order->fullfilled_status == 3)--}}
 {{--                            <span class="badge badge-success">Fullfilled</span>--}}
@@ -111,18 +98,27 @@
                         ->where('is_fulfilled',2)->count();
                         @endphp
                         @if($total_fullfilled_count > 0)
-                            <span class="badge badge-success">Fullfilled</span>
+                            <span class="btn btn-sm btn-success">Approved</span>
                         @elseif($total_rejecteded_count > 0)
-                            <span class="badge badge-danger">Rejected</span>
+                            <span class="btn btn-sm btn-danger">Rejected</span>
                         @else
-                            <span class="badge badge-warning">Pending</span>
+                            <span class="btn btn-sm btn-warning">Pending</span>
                         @endif
                     </td>
                     <td>
 {{--                        button in badge for approve , reject and fullfill--}}
-{{--                        <button type="button" class="btn badge badge-success order-action-btn" data-action="approve"> Approve </button>--}}
-                        <button type="button" class="btn btn-sm btn-info order-action-btn" data-action="fullfilled"> FullField </button>
-                        <button type="button" class="btn btn-sm btn-danger order-action-btn" data-action="reject"> Reject </button>
+                        <!-- <button type="button" class="btn btn-sm btn-info order-action-btn" data-action="fullfilled"> FullField </button>
+                        <button type="button" class="btn btn-sm btn-danger order-action-btn" data-action="reject"> Reject </button> -->
+
+                        <form action="{{ route('order.update.status') }}" class="order-action-btn-form" method="POST" style="display: flex; align-items: center;">
+                            @csrf
+                            <select name="order-action-select" class="form-control" style="margin-right: 10px;" onchange="enableSubmitButton(this)" onfocus="enableSubmitButton(this)">
+                                <option value="3" {{ $order->fullfilled_status == 2 ? 'selected' : '' }}>Approved</option>
+                                <option value="5" {{ $order->fullfilled_status == 4 ? 'selected' : '' }}>Rejected</option>
+                            </select>
+                            <button id="submit-button-{{ $product->id }}" style="background: #132644; color: white; border-radius: 6px;" type="submit" disabled>Submit</button>
+                        </form>
+
                     </td>
                 </tr>
             @endforeach
@@ -205,22 +201,16 @@
 {{--  Order status--}}
     <script>
         $(document).ready(function(){
-            $('.order-action-btn').click(function(){
-                var action = $(this).data('action');
-                var order_id = $(this).closest('tr').data('order_id');
-                var status = 0;
-                if(action == 'reject'){
-                    status = 5;
-                }else if(action == 'fullfilled') {
-                    status = 3;
-                }
+            $('.order-action-btn-form').submit(function(){
+
+              var order_id = $(this).closest('tr').data('order_id');
+              var status = $(this).find('select[name="order-action-select"]').val();
 
                 var url = "{{ route('order.update.status') }}";
                 $.ajax({
                     url: url,
                     type: 'POST',
                     data: {
-                        action: action,
                         order_id: order_id,
                         status: status
                     },
@@ -231,6 +221,17 @@
                     }
                 });
             });
-        });
+
+          });
+          
+          function enableSubmitButton(selectElement) {
+          const submitButton = $(selectElement).closest('form').find('button[type="submit"]');
+          submitButton.prop('disabled', false);
+      }
+
+        $(document).ready(function() {
+      $('#order-dataTable').DataTable();
+  });
+
     </script>
 @endpush

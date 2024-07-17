@@ -16,6 +16,7 @@ class WpOrder extends Model
         'status',
         'currency',
         'total',
+        'customer_status_show',
         'order_date',
         'created_at',
         'updated_at',
