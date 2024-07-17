@@ -96,7 +96,7 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:15',
+            'phone' => 'required|string|max:10|min:10',
             'company_name' => 'nullable|string|max:255',
             'pincode' => 'required|string|max:6',
             'state' => 'required|string|max:255',
