@@ -20,7 +20,7 @@
     
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin')}}">
-      <img src="{{asset('images/virtuouscarat-logo.png')}}" atl="virtuouscarat-logo" style="width: 50%;background: white;">
+      <img src="{{asset('images/Group.png')}}" atl="virtuouscarat-logo" >
     </a>
 
     <!-- Divider -->

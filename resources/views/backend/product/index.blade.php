@@ -26,8 +26,7 @@
               {{-- <th>Size</th> --}}
               <th>Stock Status</th>
               <th>Stock</th>
-{{--              <th>photo</th>--}}
-{{--              <th>Status</th>--}}
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -47,34 +46,17 @@
                   <td>{{$product->sku}}</td>
                     <td>{{$product->name}}</td>
                     <td>{{$product->Category->title}}
-{{--                      <sub>--}}
-{{--                          {{$product->Category->slug ?? ''}}--}}
-{{--                      </sub>--}}
                     </td>
                     <td>₹{{$product->regular_price}}</td>
                     <td>₹{{$product->sale_price}}</td>
                     <td>{{$stock_status}}</td>
                     <td>  {{$product->quantity }}</td>
-                    {{-- <td>{{$product->condition}}</td> --}}
-                    {{-- <td> {{ucfirst($product->brand->title)}}</td> --}}
-{{--                    <td>--}}
-{{--                        @if($product->main_photo)--}}
-{{--                            @php--}}
-{{--                              $photo=explode(',',$product->main_photo);--}}
-{{--                              // dd($photo);--}}
-{{--                            @endphp--}}
-{{--                            <img src="{{$photo[0]}}" class="img-fluid zoom" style="max-width:80px" alt="{{$product->main_photo}}">--}}
-{{--                        @else--}}
-{{--                            <img src="{{asset('backend/img/thumbnail-default.jpg')}}" class="img-fluid" style="max-width:80px" alt="avatar.png">--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-{{--                    <td>--}}
-{{--                        @if($product->status=='active')--}}
-{{--                            <span class="badge badge-success">{{$product->status}}</span>--}}
-{{--                        @else--}}
-{{--                            <span class="badge badge-warning">{{$product->status}}</span>--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
+                    <td>  @if($product->is_approvel == 0)
+                              <button style="    color: black;border: none;background: red;border-radius: 10px;">Not approval</button>
+                         @else
+                             <button style=" color: black;border: none;background: green;border-radius: 10px;">approval</button>
+                         @endif
+                    </td>
                     <td>
                         <a href="{{route('product.edit',$product->id)}}" class="btn  btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
                     <form method="POST" action="{{route('product.destroy',[$product->id])}}">
@@ -124,7 +106,11 @@
  
 
         $(document).ready(function() {
-          $('#product-dataTable').DataTable();
+          $('#product-dataTable').DataTable({
+            "paging": true,    // Enable pagination
+            "ordering": false, // Disable sorting
+            "info": true  
+          });
         });
 
         // Sweet alert
