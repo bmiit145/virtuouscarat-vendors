@@ -126,6 +126,6 @@ class LoginController extends Controller
         $user->save();
         
 
-        return redirect('login');
+        return redirect('/thankyou');
     }
 }

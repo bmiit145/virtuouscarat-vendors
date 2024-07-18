@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Settings;
+use App\Models\Userdetails;
 use App\User;
 use App\Rules\MatchOldPassword;
 use Hash;
+use Auth;
 use Carbon\Carbon;
 use Spatie\Activitylog\Models\Activity;
 class AdminController extends Controller
@@ -47,8 +49,10 @@ class AdminController extends Controller
     }
 
     public function settings(){
-        $data=Settings::first();
-        return view('backend.setting')->with('data',$data);
+        $data=  User::where('id', Auth::user()->id)->first();
+        $user = Userdetails::where('user_id', $data->id)->first();
+        
+        return view('backend.setting', compact('data','user'));
     }
 
     public function settingsUpdate(Request $request){
@@ -114,4 +118,66 @@ class AdminController extends Controller
     //     $activity= Activity::all();
     //     return view('backend.layouts.activity')->with('activities',$activity);
     // }
+
+    public function thankyou()
+    {
+        return view('backend.thankyou');
+    }
+
+    public function updateSetting(Request $request)
+    {
+        $contact_person_name = $request->contact_person_name;
+        $contact_person_mobile = $request->contact_person_mobile;
+        $contact_person_alternate_number = $request->contact_person_alternate_number;
+        $contact_person_alternate_email = $request->contact_person_alternate_email;
+        $business_name = $request->business_name;
+        $business_type = $request->business_type;
+        $bank_name = $request->bank_name;
+        $bank_account_number = $request->bank_account_number;
+        $ifsc_code = $request->ifsc_code;
+        $brand_name = $request->brand_name;
+        $gst_number = $request->gst_number;
+
+        $id = Auth::user()->id;
+        $data = User::find($id);
+        $data->phone = $contact_person_mobile;
+        $data->name = $contact_person_name;
+        $data->alternate_mail = $contact_person_alternate_email;
+        $data->alternate_number = $contact_person_alternate_number;
+        $data->gst_number = $gst_number;
+        $data->update();
+        
+        $business_data = Userdetails::where('user_id', $id)->first();
+
+        if($business_data)
+        {
+
+            $business = Userdetails::where('user_id', $id)
+                        ->update(['business_name' => $business_name,
+                                    'business_type' => $business_type,
+                                    'bank_name' => $bank_name,
+                                    'account_number' => $bank_account_number,
+                                    'ifsc_code' => $ifsc_code,
+                                    'brand_name' => $brand_name,
+                                    'user_id' => $data->id,
+                                    'gst' => $gst_number]);
+        }else{
+            $business = new Userdetails();
+            $business->business_name = $business_name;
+            $business->business_type = $business_type;
+            $business->bank_name = $bank_name;
+            $business->account_number = $bank_account_number;
+            $business->ifsc_code = $ifsc_code;
+            $business->brand_name = $brand_name;
+            $business->user_id = $data->id;
+            $business->gst = $gst_number;
+            $business->save();
+        }
+
+        
+
+
+
+
+    }
 }

@@ -33,6 +33,8 @@ Route::Post('logout/', 'Auth\LoginController@logout')->name('login.logout');
 Route::get('register/', 'Auth\LoginController@register')->name('login.register');
 Route::post('storeRegister/', 'Auth\LoginController@storeRegister')->name('login.storeRegister');
 
+Route::get('/thankyou','AdminController@thankyou')->name('thankyou');
+
 //Route::get('/','FrontendController@home')->name('home');
 Route::get('/', function (){
     return redirect()->route(Auth::user() ? 'admin' : 'login');
@@ -105,6 +107,8 @@ Route::get('payment/success', 'PayPalController@success')->name('payment.success
 
 Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     Route::get('/','AdminController@index')->name('admin');
+
+    Route::post('/updateSetting','AdminController@updateSetting')->name('updateSetting');
 //    Route::get('/','AdminController@index')->name('user');
     Route::get('/file-manager',function(){
         return view('backend.layouts.file-manager');
@@ -118,6 +122,7 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     // Profile
     Route::get('/profile','AdminController@profile')->name('admin-profile');
     Route::post('/profile/{id}','AdminController@profileUpdate')->name('profile-update');
+  
     // Category
     Route::resource('/category','CategoryController');
     // Product

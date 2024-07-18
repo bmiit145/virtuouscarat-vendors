@@ -36,7 +36,7 @@
 
 
     {{-- Products --}}
-    <li class="nav-item {{ request()->is('admin/product*') ? 'active_tab' : '' }}">
+    <li class="nav-item {{ request()->routeIs('product.index') ? 'active' : '' }}">
       <a class="nav-link collapsed" href="{{route('product.index')}}">
         <i class="fas fa-cubes"></i>
         <span>Products</span>
