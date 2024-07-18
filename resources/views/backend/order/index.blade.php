@@ -13,7 +13,7 @@
     </div>
     <div class="card-body">
       <div class="table-responsive">
-        @if(count($orders)>0)
+       
         <table class="table table-bordered table-hover" id="order-dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
@@ -96,10 +96,7 @@
 </tbody>
 
         </table>
-        <span style="float:right">{{$orders->links()}}</span>
-        @else
-          <h6 class="text-center">No orders found!!! Please order some products</h6>
-        @endif
+       
       </div>
     </div>
 </div>
@@ -126,15 +123,11 @@
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
 
-      $('#order-dataTable').DataTable( {
-            "columnDefs":[
-                {
-                    "orderable":false,
-                    "targets":[8]
-                }
-            ]
-        } );
+     
 
+        $(document).ready(function() {
+          $('#order-dataTable').DataTable();
+        });
         // Sweet alert
 
         function deleteData(id){

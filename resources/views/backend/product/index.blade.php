@@ -14,7 +14,7 @@
     </div>
     <div class="card-body">
       <div class="table-responsive">
-        @if(count($products)>0)
+
         <table class="table table-bordered table-hover" id="product-dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
@@ -87,10 +87,7 @@
             @endforeach
           </tbody>
         </table>
-        <span style="float:right">{{$products->links()}}</span>
-        @else
-          <h6 class="text-center">No Products found!!! Please create Product</h6>
-        @endif
+      
       </div>
     </div>
 </div><!-- Visit 'codeastro' for more projects -->
@@ -124,15 +121,11 @@
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
 
-      $('#product-dataTable').DataTable( {
-        "scrollX": false,
-            "columnDefs":[
-                {
-                    "orderable":false,
-                    "targets":[10,11,12]
-                }
-            ]
-        } );
+ 
+
+        $(document).ready(function() {
+          $('#product-dataTable').DataTable();
+        });
 
         // Sweet alert
 

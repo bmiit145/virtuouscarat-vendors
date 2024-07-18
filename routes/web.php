@@ -149,6 +149,7 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     // Settings
     Route::get('settings','AdminController@settings')->name('settings');
     Route::post('setting/update','AdminController@settingsUpdate')->name('settings.update');
+    Route::post('/verify-otp','AdminController@verifyOtpAndUpdateSetting')->name('verifyOtpAndUpdateSetting');
 
     // Notification
     Route::get('/notification/{id}','NotificationController@show')->name('admin.notification');

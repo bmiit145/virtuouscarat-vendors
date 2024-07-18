@@ -22,7 +22,6 @@ class AddColumnInUsersTable extends Migration
             $table->string('address')->after('city')->nullable();
             $table->string('website')->after('address')->nullable();
             $table->string('gst_number')->after('website')->nullable();
-            $table->string('term&condition')->after('gst_number')->nullable();
         });
     }
 
