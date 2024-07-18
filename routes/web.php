@@ -199,6 +199,7 @@ Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']
 
 Route::group(['middleware' => 'auth'], function () {
     Route::post('order/update/status' , 'OrderController@updateStatus')->name('order.update.status');
+    Route::post('order/update/product/status' , 'OrderController@updateProductStatus')->name('order.update.product.status');
 });
 
 

@@ -31,98 +31,66 @@
             </tr>
           </thead>
           <tbody>
-            @foreach($orders as $order)
-            @php
-                $shipping_charge=DB::table('shippings')->where('id',$order->shipping_id)->pluck('price');
-            @endphp
-                <tr data-order_id = {{ $order->order_id }}>
-                    <td>{{\Carbon\Carbon::parse($order->order_date)->format('Y-m-d') }}</td>
-                    <td>{{$order->order_id}}</td>
-                    <td>{{$order->billing_first_name}} {{$order->billing_last_name}}</td>
-                    <td>
-                        @foreach($order->products as $product)
-                            @if(!$product->product || $product->product->vendor_id != Auth::id())
-                                @continue
-                            @endif
-                            <span>{{  $product->product? $product->product->name : '' }}
-                                <sub>{{  $product->product? $product->product->sku : '' }}</sub>
-                            </span><br/>
-                        @endforeach
-                    </td>
-{{--                    <td>--}}
-{{--                        @foreach($order->products as $product)--}}
-{{--                            @if(!$product->product || $product->product->vendor_id != Auth::id())--}}
-{{--                                @continue--}}
-{{--                            @endif--}}
-{{--                            <span>{{  $product->product? $product->product->vendor->name : '' }}--}}
-{{--                            </span><br/>--}}
-{{--                        @endforeach--}}
-{{--                    </td>--}}
-{{--                    <td>{{$order->billing_email}}</td>--}}
-{{--                    <td>{{$order->products->sum('quantity')}}</td>--}}
-{{--                    <td>@foreach($shipping_charge as $data) $ {{number_format($data,2)}} @endforeach</td>--}}
-                    <td>@foreach($order->products as $product)
-                            @if(!$product->product || $product->product->vendor_id != Auth::id())
-                                @continue
-                            @endif
-                            <span>{{  $product->product? $product->quantity : '' }}
-                            </span><br/>
-                        @endforeach
-                      </td>
-                    <td>₹{{number_format($order->total,2)}}</td>
-{{--                    <td>--}}
-{{--                        @if($order->fullfilled_status == 3)--}}
-{{--                            <span class="badge badge-success">Fullfilled</span>--}}
-{{--                        @elseif($order->fullfilled_status == 2)--}}
-{{--                            <span class="badge badge-info">Passed to Vendor</span>--}}
-{{--                        @elseif($order->fullfilled_status == 1)--}}
-{{--                            <span class="badge badge-secondary">Processed by Admin </span>--}}
-{{--                        @elseif($order->fullfilled_status == 4)--}}
-{{--                            <span class="badge badge-warning">Rejected by Admin</span>--}}
-{{--                        @elseif($order->fullfilled_status == 5)--}}
-{{--                            <span class="badge badge-danger">Rejected</span>--}}
-{{--                        @else--}}
-{{--                            <span class="badge badge-dark ">Not Fullfilled</span>--}}
-{{--                        @endif--}}
-{{--                    </td>--}}
-                    <td>
-                        @php
-                        $total_fullfilled_count = $order->products()->whereHas('product' , function($q){
-                            $q->where('vendor_id',Auth::id());
-                        })
-                        ->where('is_fulfilled',1)->count();
+    @foreach($orders as $order)
+        @php
+            // Filter products based on vendor_id
+            $filteredProducts = $order->products->whereIn('is_fulfilled',[1 , 2 , 3])->filter(function($product) {
+                return $product->product && $product->product->vendor_id == Auth::id();
+            });
 
-                        $total_rejecteded_count = $order->products()->whereHas('product' , function($q){
-                            $q->where('vendor_id',Auth::id());
-                        })
-                        ->where('is_fulfilled',2)->count();
-                        @endphp
-                        @if($total_fullfilled_count > 0)
+            // Calculate rowspan for cells that need to span multiple rows
+            $rowspan = $filteredProducts->count();
+        @endphp
+
+        @foreach($filteredProducts as $index => $product)
+            <tr data-order_id="{{ $order->order_id }}">
+                @if($index == 0)
+                    <td rowspan="{{ $rowspan }}">{{ \Carbon\Carbon::parse($order->order_date)->format('Y-m-d') }}</td>
+                    <td rowspan="{{ $rowspan }}">{{ $order->order_id }}</td>
+                    <td rowspan="{{ $rowspan }}">{{ $order->billing_first_name }} {{ $order->billing_last_name }}</td>
+                @endif
+                <td>
+                    <span>{{ $product->product->name ?? '' }}
+                        <sub>{{ $product->product->sku ?? '' }}</sub>
+                    </span><br/>
+                </td>
+                <td>
+                    <span>{{ $product->quantity }}</span><br/>
+                </td>
+                @if($index == 0)
+                    <td rowspan="{{ $rowspan }}">₹{{ number_format($order->total, 2) }}</td>
+                    @endif
+                    <td>
+                        @if($product->is_fulfilled == 1)
                             <span class="btn btn-sm btn-success">Approved</span>
-                        @elseif($total_rejecteded_count > 0)
+                        @elseif($product->is_fulfilled == 2)
                             <span class="btn btn-sm btn-danger">Rejected</span>
-                        @else
+                        @elseif($product->is_fulfilled == 3)
                             <span class="btn btn-sm btn-warning">Pending</span>
                         @endif
                     </td>
                     <td>
-{{--                        button in badge for approve , reject and fullfill--}}
-                        <!-- <button type="button" class="btn btn-sm btn-info order-action-btn" data-action="fullfilled"> FullField </button>
-                        <button type="button" class="btn btn-sm btn-danger order-action-btn" data-action="reject"> Reject </button> -->
-
-                        <form action="{{ route('order.update.status') }}" class="order-action-btn-form" method="POST" style="display: flex; align-items: center;">
+                        @php
+                                $is_actionable = $product->is_fulfilled == 1 ? false : true;
+                        @endphp
+                        <form action="{{route('order.update.product.status') }}" class="order-product-action-btn-form" method="POST" style="display: flex; align-items: center;">
                             @csrf
+                            <input type="hidden" name="order_id" value="{{ $order->order_id }}">
+                            <input type="hidden" name="product_id" value="{{ $product->product_id }}">
                             <select name="order-action-select" class="form-control" style="margin-right: 10px;" onchange="enableSubmitButton(this)" onfocus="enableSubmitButton(this)">
-                                <option value="3" {{ $order->fullfilled_status == 2 ? 'selected' : '' }}>Approved</option>
-                                <option value="5" {{ $order->fullfilled_status == 4 ? 'selected' : '' }}>Rejected</option>
-                            </select>
-                            <button id="submit-button-{{ $product->id }}" style="background: #132644; color: white; border-radius: 6px;" type="submit" disabled>Submit</button>
+                                        @if($is_actionable)
+                                            <option value="1" {{ $product->is_fulfilled == 1 ? 'selected' : '' }}>Approved</option>
+                                        @endif
+                                        <option value="2" {{ $product->is_fulfilled == 2 ? 'selected' : '' }}>Rejected</option>
+                                    </select>
+                            <button id="submit-button-{{ $order->order_id }}" style="background: #132644; color: white; border-radius: 6px;" type="submit" disabled>Submit</button>
                         </form>
-
                     </td>
-                </tr>
-            @endforeach
-          </tbody>
+            </tr>
+        @endforeach
+    @endforeach
+</tbody>
+
         </table>
         <span style="float:right">{{$orders->links()}}</span>
         @else
@@ -202,7 +170,6 @@
     <script>
         $(document).ready(function(){
             $('.order-action-btn-form').submit(function(){
-
               var order_id = $(this).closest('tr').data('order_id');
               var status = $(this).find('select[name="order-action-select"]').val();
 
@@ -222,6 +189,29 @@
                 });
             });
 
+            $('.order-product-action-btn-form').submit(function(e){
+                e.preventDefault();
+                var form = $(this);
+                var order_id = form.find('input[name="order_id"]').val();
+                var product_id = form.find('input[name="product_id"]').val();
+                var status = form.find('select[name="order-action-select"]').val();
+
+                var url = "{{ route('order.update.product.status') }}";
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        order_id: order_id,
+                        product_id: product_id,
+                        status: status
+                    },
+                    success: function(data){
+                        if(data.status){
+                            location.reload();
+                        }
+                    }
+                });
+            });
           });
           
           function enableSubmitButton(selectElement) {

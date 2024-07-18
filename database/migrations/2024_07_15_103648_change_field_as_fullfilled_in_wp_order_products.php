@@ -14,7 +14,7 @@ class ChangeFieldAsFullfilledInWpOrderProducts extends Migration
     public function up()
     {
         Schema::table('wp_order_products', function (Blueprint $table) {
-            $table->integer('is_fulfilled')->default(0)->comment('1. fullfilled , 2. rejected')->change();
+            $table->integer('is_fulfilled')->default(0)->comment('1. fullfilled , 2. rejected 3.passed By Admin 4.Rejected By admin 5.cancelled By Customer')->change();
         });
     }
 
@@ -26,7 +26,7 @@ class ChangeFieldAsFullfilledInWpOrderProducts extends Migration
     public function down()
     {
         Schema::table('wp_order_products', function (Blueprint $table) {
-            $table->integer('is_fulfilled')->default(0)-> comment('1. fullfilled , 2. rejected')
+            $table->integer('is_fulfilled')->default(0)-> comment('1. fullfilled , 2. rejected 3.passed By Admin 4.Rejected By admin 5.cancelled By Customer')
                 ->change();
         });
     }

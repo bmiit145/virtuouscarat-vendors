@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\WpOrder;
+use App\Models\WpOrderProduct;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Order;
@@ -27,7 +28,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders=WpOrder::
-            whereIn('fullfilled_status',[2 , 3 , 5])
+            whereIn('fullfilled_status',[2 , 3 , 5 , 6])
             ->whereHas('products.product' , function($query){
             $query->where('vendor_id',auth()->user()->id);
         })
@@ -371,5 +372,53 @@ class OrderController extends Controller
         else{
             return response()->json(['status'=>'error','message'=>'Error while updating order status']);
         }
+    }
+
+
+    public function updateProductStatus(Request $request){
+
+        $wpOrderProduct = WpOrderProduct::where('order_id', $request->order_id)
+        ->where('product_id', $request->product_id)
+        ->first();
+
+    if (!$wpOrderProduct) {
+        return response()->json(['status' => 'error', 'message' => 'Product not found']);
+    }
+
+    $wpOrderProduct->is_fulfilled = $request->status;
+    $wpOrderProduct->save();
+
+    $order = WpOrder::where('order_id', $request->order_id)->first();
+    if (!$order) {
+        return response()->json(['status' => 'error', 'message' => 'Order not found']);
+    }
+
+    $totalProducts = $order->products()->count();
+    $fulfilledProducts = $order->products()->where('is_fulfilled', 1)->count();
+    $rejectedProducts = $order->products()->where('is_fulfilled', 2)->count();
+
+    if ($totalProducts == $fulfilledProducts) {
+        $order->fullfilled_status = 3; // All products fulfilled
+    } elseif ($totalProducts == $rejectedProducts) {
+        $order->fullfilled_status = 5; // All products rejected
+    } else {
+        $order->fullfilled_status = 6; // Partially fulfilled
+    }
+
+    $order->save();
+
+
+    if($order->fullfilled_status == 3){
+        $status_woocommerce = 'completed';
+    }else if($order->fullfilled_status == 5){
+        $status_woocommerce = 'cancelled';
+    }
+
+    if ($order->fullfilled_status == 3 || $order->fullfilled_status == 5) {
+        $res = updateOrderStatusInWooCommerce($request->order_id, $status_woocommerce);
+    }
+
+    return response()->json(['status' => 'success', 'message' => 'Product status updated successfully']);
+
     }
 }
