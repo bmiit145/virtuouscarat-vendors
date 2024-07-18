@@ -126,7 +126,11 @@
      
 
         $(document).ready(function() {
-          $('#order-dataTable').DataTable();
+          $('#order-dataTable').DataTable({
+            "paging": true,    // Enable pagination
+            "ordering": false, // Disable sorting
+            "info": true 
+          });
         });
         // Sweet alert
 
