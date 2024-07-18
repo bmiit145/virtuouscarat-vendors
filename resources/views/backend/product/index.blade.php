@@ -18,13 +18,12 @@
         <table class="table table-bordered table-hover" id="product-dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>#</th>
+              <th>SKU ID</th>
               <th>name</th>
               <th>Category</th>
               <th>Regular price</th>
               <th>Sale Price</th>
               {{-- <th>Size</th> --}}
-              <th>SKU ID</th>
               <th>Stock Status</th>
               <th>Stock</th>
 {{--              <th>photo</th>--}}
@@ -45,16 +44,15 @@
               }
             @endphp
                 <tr>
-                    <td>{{$product->id}}</td>
+                  <td>{{$product->sku}}</td>
                     <td>{{$product->name}}</td>
                     <td>{{$product->Category->title}}
 {{--                      <sub>--}}
 {{--                          {{$product->Category->slug ?? ''}}--}}
 {{--                      </sub>--}}
                     </td>
-                    <td>{{$product->regular_price}}$</td>
-                    <td>{{$product->sale_price}}$</td>
-                    <td>{{$product->sku}}</td>
+                    <td>₹{{$product->regular_price}}</td>
+                    <td>₹{{$product->sale_price}}</td>
                     <td>{{$stock_status}}</td>
                     <td>  {{$product->quantity }}</td>
                     {{-- <td>{{$product->condition}}</td> --}}
@@ -78,11 +76,11 @@
 {{--                        @endif--}}
 {{--                    </td>--}}
                     <td>
-                        <a href="{{route('product.edit',$product->id)}}" class="btn btn-primary btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
+                        <a href="{{route('product.edit',$product->id)}}" class="btn  btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
                     <form method="POST" action="{{route('product.destroy',[$product->id])}}">
                       @csrf
                       @method('DELETE')
-                          <button class="btn btn-danger btn-sm dltBtn" data-id={{$product->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                          <button class="btn  btn-sm dltBtn" data-id={{$product->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
                         </form>
                     </td>
                 </tr>

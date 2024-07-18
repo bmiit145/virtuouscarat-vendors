@@ -73,7 +73,7 @@
         </div> --}}
 
         <div class="form-group">
-          <label for="price" class="col-form-label">Regular Price($) <span class="text-danger">*</span></label>
+          <label for="price" class="col-form-label">Regular Price(₹) <span class="text-danger">*</span></label>
           <input id="price" type="number" name="price" placeholder="Enter price" min="0"  value="{{old('price')}}" class="form-control">
           @error('price')
           <span class="text-danger">{{$message}}</span>
@@ -81,7 +81,7 @@
         </div>
 
         <div class="form-group">
-          <label for="sale_price" class="col-form-label">Sale Price($)</label>
+          <label for="sale_price" class="col-form-label">Sale Price(₹)</label>
           <input id="sale_price" type="number" name="sale_price" min="0" placeholder="Enter Sale Price"  value="{{old('sale_price')}}" class="form-control">
           @error('sale_price')
           <span class="text-danger">{{$message}}</span>
