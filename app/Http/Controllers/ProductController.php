@@ -157,7 +157,7 @@ class ProductController extends Controller
 
 
         // Call the WooCommerce update function
-         $wooResponse = WooCommerceProductController::editProductInWooCommerce($sku, $product);
+        //  $wooResponse = WooCommerceProductController::editProductInWooCommerce($sku, $product);
 
         if (isset($wooResponse['error'])) {
             // Handle WooCommerce update error
