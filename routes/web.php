@@ -122,6 +122,10 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     // Profile
     Route::get('/profile','AdminController@profile')->name('admin-profile');
     Route::post('/profile/{id}','AdminController@profileUpdate')->name('profile-update');
+
+    Route::post('/remove-gallery-image', 'ProductController@removeGalleryImage')->name('remove.gallery.image');
+
+    
   
     // Category
     Route::resource('/category','CategoryController');

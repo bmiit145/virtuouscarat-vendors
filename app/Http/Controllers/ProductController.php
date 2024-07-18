@@ -58,6 +58,26 @@ class ProductController extends Controller
         //
     }
 
+    public function removeGalleryImage(Request $request)
+    {
+        // dd($request->all());
+        $imageUrl = $request->imageUrl;
+
+        // Logic to remove $imageUrl from $product->photo_gallery
+        $product = WpProduct::find($request->id); // Adjust this to fetch your product
+
+        $gallery = json_decode($product->photo_gallery);
+
+        // Remove the image URL from the array
+        $gallery = array_values(array_diff($gallery, [$imageUrl]));
+
+        // Update the product's photo_gallery field
+        $product->photo_gallery = json_encode($gallery);
+        $product->save();
+
+        return response()->json(['success' => true]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -85,42 +105,66 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $product=Product::findOrFail($id);
-        $this->validate($request,[
-            'title'=>'string|required',
-            'summary'=>'string|required',
-            'description'=>'string|nullable',
-            'photo'=>'string|required',
-            'size'=>'nullable',
-            'stock'=>"required|numeric",
-            'cat_id'=>'required|exists:categories,id',
-            'child_cat_id'=>'nullable|exists:categories,id',
-            'is_featured'=>'sometimes|in:1',
-            'brand_id'=>'nullable|exists:brands,id',
-            'status'=>'required|in:active,inactive',
-            'condition'=>'required|in:default,new,hot',
-            'price'=>'required|numeric',
-            'discount'=>'nullable|numeric'
-        ]);
+        // return $request->all();
+        $product = WpProduct::findOrFail($id);
+        $old_product = clone $product;
+        $sku = $old_product->sku;
 
-        $data=$request->all();
-        $data['is_featured']=$request->input('is_featured',0);
-        $size=$request->input('size');
-        if($size){
-            $data['size']=implode(',',$size);
+        // Update main photo
+        if ($request->file('photo')) {
+            $mainPhotoPath = $request->file('photo')->store('photos', 'public');
+            $fullMainPhotoUrl = asset('storage/' . $mainPhotoPath);
+            $product->main_photo = $fullMainPhotoUrl;
         }
-        else{
-            $data['size']='';
+
+        // Update photo gallery
+        $galleryPaths = [];
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $galleryImage) {
+                $path = $galleryImage->store('photos', 'public');
+                $fullUrl = asset('storage/' . $path);
+                $galleryPaths[] = $fullUrl;
+            }
+            $product->photo_gallery = json_encode($galleryPaths);
         }
-        // return $data;
-        $status=$product->fill($data)->save();
-        if($status){
-            request()->session()->flash('success','Product updated');
+
+        // Update product fields
+        $product->category_id = $request->category_id;
+        $product->name = $request->prod_name;
+        $product->description = $request->description;
+        $product->short_description = $request->short_desc;
+        $product->regular_price = $request->price;
+        $product->sale_price = $request->sale_price;
+        $product->sku = $request->sku;
+        $product->stock_status = $request->productStatus;
+        $product->igi_certificate = $request->IGI_certificate;
+        $product->quantity = $request->quantity;
+        $product->document_number = $request->document_number;
+
+        // Update product attributes
+        if ($request->has('attributes')) {
+            $product->attributes()->delete();
+            foreach ($request->input('attributes') as $name => $value) {
+                $product->attributes()->create([
+                    'name' => $name,
+                    'value' => $value,
+                ]);
+            }
         }
-        else{
-            request()->session()->flash('error','Please try again!!');
+
+        // Save the product
+        $product->save();
+
+
+        // Call the WooCommerce update function
+         $wooResponse = WooCommerceProductController::editProductInWooCommerce($sku, $product);
+
+        if (isset($wooResponse['error'])) {
+            // Handle WooCommerce update error
+            return redirect()->route('product.index')->with('error', 'Failed to update product in WooCommerce: ' . $wooResponse['error']);
         }
-        return redirect()->route('product.index');
+
+        return redirect()->route('product.index')->with('success', 'Product updated successfully.');
     }
 
     /**
