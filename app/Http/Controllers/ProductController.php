@@ -165,8 +165,6 @@ class ProductController extends Controller
 
         $this->validate($request,['category_id' => 'required|integer',
         'prod_name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'short_desc' => 'nullable|string',
         'price' => 'nullable|numeric',
         'sale_price' => 'nullable|numeric',
         'sku' => 'nullable|string|max:255',
@@ -232,7 +230,7 @@ class ProductController extends Controller
                 }
             }
 
-        return redirect()->back()->with('success', 'Product created successfully.');
+            return redirect()->route('product.index')->with('success', 'Products imported successfully.');
 
     }
 

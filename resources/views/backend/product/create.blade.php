@@ -45,7 +45,7 @@
 
 
         <div class="form-group">
-          <label for="short_desc" class="col-form-label">Short Description<span class="text-danger">*</span></label>
+          <label for="short_desc" class="col-form-label">Short Description</label>
           <textarea class="form-control" id="short_desc" name="short_desc">{{old('short_desc')}}</textarea>
           @error('short_desc')
           <span class="text-danger">{{$message}}</span>
