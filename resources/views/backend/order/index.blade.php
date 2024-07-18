@@ -34,7 +34,7 @@
     @foreach($orders as $order)
         @php
             // Filter products based on vendor_id
-            $filteredProducts = $order->products->whereIn('is_fulfilled',[1 , 2 , 3])->filter(function($product) {
+            $filteredProducts = $order->products->whereIn('is_fulfilled',[1 , 2 , 3 , 5])->filter(function($product) {
                 return $product->product && $product->product->vendor_id == Auth::id();
             });
 
@@ -67,12 +67,15 @@
                             <span class="btn btn-sm btn-danger">Rejected</span>
                         @elseif($product->is_fulfilled == 3)
                             <span class="btn btn-sm btn-warning">Pending</span>
+                        @elseif($product->is_fulfilled == 5)
+                            <span class="btn btn-sm btn-dark">Cancelled</span>
                         @endif
                     </td>
                     <td>
                         @php
                                 $is_actionable = $product->is_fulfilled == 1 ? false : true;
                         @endphp
+                        @if($product->is_fulfilled != 5)
                         <form action="{{route('order.update.product.status') }}" class="order-product-action-btn-form" method="POST" style="display: flex; align-items: center;">
                             @csrf
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
@@ -85,6 +88,7 @@
                                     </select>
                             <button id="submit-button-{{ $order->order_id }}" style="background: #132644; color: white; border-radius: 6px;" type="submit" disabled>Submit</button>
                         </form>
+                        @endif
                     </td>
             </tr>
         @endforeach

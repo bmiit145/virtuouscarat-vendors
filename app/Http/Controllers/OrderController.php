@@ -28,7 +28,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders=WpOrder::
-            whereIn('fullfilled_status',[2 , 3 , 5 , 6])
+            whereIn('fullfilled_status',[2 , 3 , 5 , 6 , 7])
             ->whereHas('products.product' , function($query){
             $query->where('vendor_id',auth()->user()->id);
         })
