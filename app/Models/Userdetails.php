@@ -9,5 +9,5 @@ class Userdetails extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id','business_name','business_type','bank_name','account_number','ifsc_code','brand_name','gst'];
+    protected $fillable = ['user_id','business_name','business_type','bank_name','account_number','ifsc_code','brand_name','gst','otp'];
 }
