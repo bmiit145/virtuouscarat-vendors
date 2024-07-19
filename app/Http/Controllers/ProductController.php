@@ -157,7 +157,7 @@ class ProductController extends Controller
 
 
         // Call the WooCommerce update function
-         $wooResponse = WooCommerceProductController::editProductInWooCommerce($sku, $product);
+        //  $wooResponse = WooCommerceProductController::editProductInWooCommerce($sku, $product);
 
         if (isset($wooResponse['error'])) {
             // Handle WooCommerce update error
@@ -214,12 +214,11 @@ class ProductController extends Controller
         'sku' => 'nullable|string|max:255',
         'quantity' => 'nullable|integer',
         'IGI_certificate' => 'nullable|string|max:255',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'gallery' => 'nullable|array',
         'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'attributes' => 'nullable|array']
          );
-
 
         if ($request->hasFile('photo')) {
             $mainPhotoPath = $request->file('photo')->store('photos', 'public');

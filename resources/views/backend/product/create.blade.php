@@ -14,7 +14,7 @@
 <div class="card">
     <h5 class="card-header">Add Product</h5>
     <div class="card-body">
-      <form method="post" action="{{route('product.store')}}" enctype="multipart/form-data">
+      <form method="post" action="{{route('product.store')}}" id="productForm" enctype="multipart/form-data">
         {{csrf_field()}}
         <div class="form-group">
           <label for="category_id">Category <span class="text-danger">*</span></label>
@@ -415,4 +415,52 @@
       }
   }
 </script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
+<script>
+  // validation for form as jquery
+  $(document).ready(function() {
+      $('#productForm').validate({
+          rules: {
+              category_id: {
+                  required: true
+              },
+              prod_name: {
+                  required: true
+              },
+              price: {
+                  required: true
+              },
+              sku: {
+                  required: true
+              },
+              photo: {
+                  required: true
+              },
+              gallery: {
+                  required: true
+              }
+          },
+          messages: {
+              category_id: {
+                  required: 'Please select a category'
+              },
+              prod_name: {
+                  required: 'Please enter product name'
+              },
+              price: {
+                  required: 'Please enter price'
+              },
+              sku: {
+                  required: 'Please enter SKU'
+              },
+              photo: {
+                  required: 'Please select a main photo'
+              },
+              gallery: {
+                  required: 'Please select at least one image for gallery'
+              }
+          }
+      });
+  });
+</script> -->
 @endpush

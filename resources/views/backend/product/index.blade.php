@@ -52,18 +52,22 @@
                     <td>{{$stock_status}}</td>
                     <td>  {{$product->quantity }}</td>
                     <td>  @if($product->is_approvel == 0)
-                              <button style="    color: black;border: none;background: red;border-radius: 10px;">Not approval</button>
+                              <button class="btn btn-sm btn-warning" style="cursor: unset;">Pendding</button>
+                          @elseif($product->is_approvel == 1)
+                          <button class="btn btn-sm btn-success" style="cursor: unset;">Approved</button>
                          @else
-                             <button style=" color: black;border: none;background: green;border-radius: 10px;">approval</button>
+                             <button class="btn btn-sm btn-danger" style="cursor: unset;">Rejected</button>
                          @endif
                     </td>
                     <td>
+                      @if($product->is_approvel == 0)
                         <a href="{{route('product.edit',$product->id)}}" class="btn  btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
                     <form method="POST" action="{{route('product.destroy',[$product->id])}}">
                       @csrf
                       @method('DELETE')
                           <button class="btn  btn-sm dltBtn" data-id={{$product->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
                         </form>
+                        @endif
                     </td>
                 </tr>
             @endforeach
