@@ -103,7 +103,7 @@ class LoginController extends Controller
             'city' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'website' => 'nullable|string|max:255',
-            'gst_number' => ['required', 'string', 'regex:/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/'],
+            // 'gst_number' => ['required|unique:users', 'string', 'regex:/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/'],
         ]);
     
         if ($validator->fails()) {
