@@ -217,7 +217,9 @@ class ProductController extends Controller
         'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'gallery' => 'nullable|array',
         'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'attributes' => 'nullable|array']
+        'attributes' => 'required|array',
+        'attributes.*' => 'required'
+        ]
          );
 
         if ($request->hasFile('photo')) {

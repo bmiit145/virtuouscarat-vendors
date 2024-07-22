@@ -18,14 +18,13 @@
         <table class="table table-bordered table-hover" id="product-dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>SKU ID</th>
-              <th>name</th>
-              <th>Category</th>
-              <th>Regular price</th>
-              <th>Sale Price</th>
-              {{-- <th>Size</th> --}}
-              <th>Stock Status</th>
-              <th>Stock</th>
+              <th>SKU Number</th>
+              <th>Product Name</th>
+              {{-- <th>Category</th> --}}
+              <th>Sale / List Price</th>
+
+         
+              <th>Stock Quantity</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
@@ -43,13 +42,11 @@
               }
             @endphp
                 <tr>
-                  <td>{{$product->sku}}</td>
+                  <td>{{$product->sku}}<sub>{{$product->Category->title}}</sub></td>
                     <td>{{$product->name}}</td>
-                    <td>{{$product->Category->title}}
-                    </td>
-                    <td>₹{{$product->regular_price}}</td>
-                    <td>₹{{$product->sale_price}}</td>
-                    <td>{{$stock_status}}</td>
+            
+                    <td>₹{{$product->sale_price}} <sub>₹{{$product->regular_price}}</sub></td>
+           
                     <td>  {{$product->quantity }}</td>
                     <td>  @if($product->is_approvel == 0)
                               <button class="btn btn-sm btn-warning" style="cursor: unset;">Pendding</button>

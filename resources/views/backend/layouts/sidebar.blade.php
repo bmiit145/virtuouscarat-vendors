@@ -13,6 +13,12 @@
     background-color: #132644 !important;
     background-size: cover;
 }
+.sidebar.toggled .sidebar-logo2 {
+        display: block !important;
+    }
+    .sidebar.toggled .sidebar-logo1 {
+        display: none;
+    }
 
 </style>
 
@@ -20,7 +26,8 @@
     
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('admin')}}">
-      <img src="{{asset('images/Group.png')}}" atl="virtuouscarat-logo" >
+      <img src="{{ asset('images/Group.png') }}" atl="virtuouscarat-logo" id="fullLogo" class="sidebar-logo1">
+      <img src="{{ asset('images/vs.png') }}" atl="virtuouscarat-logo" id="smallLogo" class="sidebar-logo2 d-none">
     </a>
 
     <!-- Divider -->
