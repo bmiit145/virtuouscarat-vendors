@@ -28,7 +28,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products=WpProduct::getAllProduct();
+        $products=WpProduct::where('vendor_id',Auth::id())->get();
         // return $products;
         return view('backend.product.index')->with('products',$products);
     }
@@ -156,6 +156,7 @@ class ProductController extends Controller
         $product->save();
 
 
+        $wooResponse = [];
         // Call the WooCommerce update function
         //  $wooResponse = WooCommerceProductController::editProductInWooCommerce($sku, $product);
 
@@ -207,18 +208,40 @@ class ProductController extends Controller
     public function store(Request $request){
         // dd($request->all());
 
-        $this->validate($request,['category_id' => 'required|integer',
-        'prod_name' => 'required|string|max:255',
-        'price' => 'nullable|numeric',
-        'sale_price' => 'nullable|numeric',
-        'sku' => 'nullable|string|max:255',
-        'quantity' => 'nullable|integer',
-        'IGI_certificate' => 'nullable|string|max:255',
-        'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'gallery' => 'nullable|array',
-        'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'attributes' => 'nullable|array']
-         );
+        $this->validate($request, [
+            'category_id' => 'required|exists:categories,id',
+            'prod_name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'sale_price' => 'nullable|numeric|lte:price',
+            'sku' => 'nullable|string|max:255|unique:wp_products,sku', // Replace 'products' with your actual table name
+            'quantity' => 'nullable|integer|min:1',
+            'IGI_certificate' => 'nullable|string|max:255',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'attributes' => 'nullable|array'
+        ], [
+            'category_id.required' => 'Category is required',
+            'category_id.exists' => 'Selected category does not exist',
+            'prod_name.required' => 'Product name is required',
+            'price.numeric' => 'Price must be a number',
+            'sale_price.numeric' => 'Sale price must be a number',
+            'sale_price.lt' => 'Sale price must be less than regular price',
+            'sku.string' => 'SKU must be a string',
+            'sku.max' => 'SKU must not exceed 255 characters',
+            'sku.unique' => 'SKU already exists',
+            'quantity.integer' => 'Quantity must be an integer',
+            'quantity.min' => 'Quantity must be greater than zero',
+            'IGI_certificate.string' => 'IGI certificate must be a string',
+            'photo.image' => 'Main photo must be an image',
+            'photo.mimes' => 'Main photo must be a file of type: jpeg, png, jpg, gif, svg',
+            'photo.max' => 'Main photo may not be greater than 2048 kilobytes',
+            'gallery.array' => 'Gallery must be an array',
+            'gallery.*.image' => 'Gallery images must be images',
+            'gallery.*.mimes' => 'Gallery images must be files of type: jpeg, png, jpg, gif, svg',
+            'gallery.*.max' => 'Gallery images may not be greater than 2048 kilobytes',
+            'attributes.array' => 'Attributes must be an array',
+        ]);
 
         if ($request->hasFile('photo')) {
             $mainPhotoPath = $request->file('photo')->store('photos', 'public');
@@ -252,7 +275,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'short_description' => $request->short_desc,
             'regular_price' => $request->price,
-            'sale_price' => $request->sale_price,
+            'sale_price' => $request->sale_price??$request->price,
             'sku' => $request->sku,
             'stock_status' => $request->productStatus,
             'igi_certificate' => $request->IGI_certificate,
