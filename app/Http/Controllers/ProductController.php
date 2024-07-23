@@ -219,7 +219,8 @@ class ProductController extends Controller
             'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'gallery' => 'nullable|array',
             'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'attributes' => 'nullable|array'
+            'attributes' => 'nullable|array',
+            'attributes.*' => 'required'
         ], [
             'category_id.required' => 'Category is required',
             'category_id.exists' => 'Selected category does not exist',

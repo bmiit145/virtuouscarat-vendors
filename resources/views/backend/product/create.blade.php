@@ -10,6 +10,9 @@
           max-height: 100px;
           margin: 2px;
         }
+        label{
+          color: black
+        }
 </style>
 <div class="card">
     <h5 class="card-header">Add Product</h5>
@@ -73,7 +76,7 @@
         </div> --}}
 
         <div class="form-group">
-          <label for="price" class="col-form-label">Regular Price(₹) <span class="text-danger">*</span></label>
+          <label for="price" class="col-form-label">List Price(₹) <span class="text-danger">*</span></label>
           <input id="price" type="number" name="price" placeholder="Enter price" min="0"  value="{{old('price')}}" class="form-control">
           @error('price')
           <span class="text-danger">{{$message}}</span>
@@ -97,9 +100,16 @@
           <span class="text-danger">{{$message}}</span>
           @enderror
         </div>
+        <div class="form-group">
+          <label for="quantity" class="col-form-label">Quantity <span class="text-danger">*</span></label>
+          <input id="number" type="number" name="quantity" placeholder="Quantity"  value="{{old('quantity')}}" class="form-control">
+          @error('quantity')
+          <span class="text-danger">{{$message}}</span>
+          @enderror
+        </div>
 
         {{-- Stock Status --}}
-        <label class="col-form-label">Stock Status <span class="text-danger">*</span></label>
+        {{-- <label class="col-form-label">Stock Status <span class="text-danger">*</span></label>
         <div class="container mt-4">
           <div class="form-group">
               <div class="form-check">
@@ -125,7 +135,7 @@
               <label for="quantity" class="col-form-label">Quantity</label>
               <input type="number" class="form-control" name="quantity" id="quantity" min="1">
           </div>
-      </div>
+      </div> --}}
 
       
       <div class="form-group">
@@ -138,7 +148,7 @@
 
 
       {{-- Attribute --}}
-    
+      
       @php
       $attributes = [
           'Type' => 'Lab Grown Diamond',
@@ -148,7 +158,6 @@
           'Colour' => 'E',
           'Clarity' => 'VS1',
           'Fluorescence' => 'None',
-          'Availability' => 'Online Only',
           'Growth Method' => 'CVD',
           'Polish' => 'Excellent',
           'Symmetry' => 'Excellent',
@@ -156,24 +165,25 @@
           'Depth' => '62.5%',
           'Ratio' => '1.01'
       ];
-  @endphp
+      @endphp
 
-<hr/>
-<h5> Attributes </h3>
-<div class="row">
-  @foreach ($attributes as $attribute => $value)
-      <div class="col-md-4">
-          <div class="form-group">
-              <label for="{{ str_replace(' ', '_', strtolower($attribute)) }}">{{ $attribute }}</label>
-              <input type="text" class="form-control" name="attributes[{{ $attribute }}]" id="{{ str_replace(' ', '_', strtolower($attribute)) }}" value="{{ old('attributes.' . $attribute, $value) }}">
+  <hr/>
+  <h5> Attributes </h3>
+    <div class="row">
+      @foreach ($attributes as $attribute => $value)
+          <div class="col-md-4">
+              <div class="form-group">
+                  <label for="{{ str_replace(' ', '_', strtolower($attribute)) }}">{{ $attribute }}</label>
+                  <input type="text" class="form-control" name="attributes[{{ $attribute }}]" id="{{ str_replace(' ', '_', strtolower($attribute)) }}" value="{{ old('attributes.' . $attribute, $value) }}"
+                         @if ($attribute === 'Type') disabled @endif>
+              </div>
           </div>
-      </div>
-      
-      @if (($loop->iteration % 3) == 0 && !$loop->last)
-          </div><div class="row">
-      @endif
-  @endforeach
-</div>
+          
+          @if (($loop->iteration % 3) == 0 && !$loop->last)
+              </div><div class="row">
+          @endif
+      @endforeach
+  </div>
 
 
 
