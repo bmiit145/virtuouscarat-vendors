@@ -13,7 +13,7 @@
     </div>
     <div class="card-body">
       <div class="table-responsive">
-       
+
         <table class="table table-bordered table-hover" id="order-dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
@@ -25,6 +25,7 @@
 {{--                <th>Vendor Name</th>--}}
 {{--              <th>Email</th>--}}
 {{--              <th>Charge</th>--}}
+                <th>Product Price</th>
               <th>Order Value</th>
                 <th>Status</th>
               <th>Action</th>
@@ -57,8 +58,20 @@
                 <td>
                     <span>{{ $product->quantity }}</span><br/>
                 </td>
+                    <td>
+                        @if($product->product)
+                            <span>₹{{ $product->total }}<sub>₹{{ $product->price }}</sub></span>
+                        @endif
+                    </td>
                 @if($index == 0)
-                    <td rowspan="{{ $rowspan }}">₹{{ number_format($order->total, 2) }}</td>
+                    @php
+//                        $orderValue = $order->products()->whereHas('product' , function($query){
+//                            $query->where('vendor_id' , Auth::id());
+//                        })->sum('total');
+
+                    $orderValue = $filteredProducts->sum('total');
+                    @endphp
+                    <td rowspan="{{ $rowspan }}">₹{{ number_format($orderValue, 2) }}</td>
                     @endif
                     <td>
                         @if($product->is_fulfilled == 1)
@@ -73,21 +86,21 @@
                     </td>
                     <td>
                         @php
-                                $is_actionable = $product->is_fulfilled == 1 ? false : true;
+                                $is_actionable = $product->is_fulfilled == 3 ? true : false;
                         @endphp
                         @if($product->is_fulfilled != 5)
+                            @if($is_actionable)
                         <form action="{{route('order.update.product.status') }}" class="order-product-action-btn-form" method="POST" style="display: flex; align-items: center;">
                             @csrf
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
                             <input type="hidden" name="product_id" value="{{ $product->product_id }}">
                             <select name="order-action-select" class="form-control" style="margin-right: 10px;" onchange="enableSubmitButton(this)" onfocus="enableSubmitButton(this)">
-                                        @if($is_actionable)
                                             <option value="1" {{ $product->is_fulfilled == 1 ? 'selected' : '' }}>Approved</option>
-                                        @endif
                                         <option value="2" {{ $product->is_fulfilled == 2 ? 'selected' : '' }}>Rejected</option>
                                     </select>
                             <button id="submit-button-{{ $order->order_id }}" style="background: #132644; color: white; border-radius: 6px;" type="submit" disabled>Submit</button>
                         </form>
+                            @endif
                         @endif
                     </td>
             </tr>
@@ -96,7 +109,7 @@
 </tbody>
 
         </table>
-       
+
       </div>
     </div>
 </div>
@@ -123,13 +136,13 @@
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
 
-     
+
 
         $(document).ready(function() {
           $('#order-dataTable').DataTable({
             "paging": true,    // Enable pagination
             "ordering": false, // Disable sorting
-            "info": true 
+            "info": true
           });
         });
         // Sweet alert
@@ -214,7 +227,7 @@
                 });
             });
           });
-          
+
           function enableSubmitButton(selectElement) {
           const submitButton = $(selectElement).closest('form').find('button[type="submit"]');
           submitButton.prop('disabled', false);

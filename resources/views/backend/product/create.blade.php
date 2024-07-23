@@ -141,7 +141,7 @@
       <div class="form-group">
         <label for="IGI_certificate" class="col-form-label">IGI Certificate link<span class="text-danger">*</span></label>
         <input id="IGI_certificate" type="text" name="IGI_certificate" placeholder="IGI Certificate Link"  value="{{old('IGI_cert')}}" class="form-control">
-        @error('sku')
+        @error('IGI_certificate')
         <span class="text-danger">{{$message}}</span>
         @enderror
       </div>
@@ -266,6 +266,9 @@
   <input type="file" id="imageInput" accept="image/*" style="display: none;" name="photo" onchange="previewImage(event)">
   <div id="holder" style="margin-top: 15px; max-height: 100px;"></div>
   <span id="error" class="text-danger"></span>
+  @error('photo')
+        <span class="text-danger">{{$message}}</span>
+  @enderror
 </div>
 
 <!-- Image Gallery Input -->
@@ -281,7 +284,9 @@
   </div>
   <input type="file" id="galleryInput" accept="image/*" style="display: none;" name="gallery[]" multiple onchange="previewGalleryImages(event)">
   <div id="galleryHolder" style="margin-top: 15px; max-height: 100px;"></div>
-  <span id="galleryError" class="text-danger"></span>
+  @error('gallery.*')
+        <span class="text-danger">{{$message}}</span>
+  @enderror
 </div>
 
 

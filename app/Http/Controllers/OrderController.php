@@ -32,7 +32,8 @@ class OrderController extends Controller
             ->whereHas('products.product' , function($query){
             $query->where('vendor_id',auth()->user()->id);
         })
-        ->orderBy('id','DESC')->paginate(10);
+            ->orderBy('order_date','DESC')
+        ->orderBy('order_id','DESC')->paginate(10);
 
         return view('backend.order.index')->with('orders',$orders);
     }
