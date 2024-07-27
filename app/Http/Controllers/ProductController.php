@@ -17,85 +17,98 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    protected $defaultImage;
+    protected $defaultImageGallery;
+    protected $headerMapping;
 
+    public function __construct(){
+        $this->defaultImage = asset('storage/CategoryProductImage/default.jpeg');
+        $this->defaultImageGallery = [
+        ];
 
-    protected    $headerMapping = [
-        'name' => [
-            'header' => ['name'],
-            'default' => null
-        ],
-        'description' => [
-            'header' => ['DESCRIPTION'],
-            'default' => 'No description available.'
-        ],
-        'short_description' => [
-            'header' => ['SHORT DESCRIPTION'],
-            'default' => 'No short description available.'
-        ],
-        'sku' => [
-            'header' => ['sku' , 'SKU' , 'Stock #' , 'RE FNO.' , 'RE FNO.Ψ' , 'Certificate #'],
-            'default' => null
-        ],
-        'igi_certificate' => [
-            'header' => ['CERTI LINK'],
-            'default' => null
-        ],
-        'category' => [
-            'header' => ['SHAPE' , 'Shape' ],
-            'default' => 'Uncategorized'
-        ],
-        'main_photo' => [
-            'header' => ['Image Link' , 'Image' , 'main_photo' ],
-            'default' => '[]'
-        ],
-        'quantity' => [
-            'header' => ['quantity'],
-            'default' => 1
-        ],
-        'document_number' => [
-            'header' => ['REPORTNO' , 'REPORT #' , 'RE FNO.' , 'RE FNO.Ψ' , 'Certificate #'],
-            'default' => null
-        ],
-        'video_link' => [
-            'header' => ['video_link' , '360 VIDEO LINKS' , 'Video Link'],
-            'default' => null
-        ],
-        'location' => [
-            'header' => ['LOC' , 'LOCATION' , 'Location' , 'City'],
-            'default' => null
-        ],
-        'comment' => [
-            'header' => ['COMMENT' , 'COMMENT Ψ' , ],
-            'default' => null
-        ],
-        'CTS' => [
-            'header' => ['CTS', 'CARAT' , 'CARAT WEIGHT' , 'Weight' , 'WEIGHT' , 'WEIGHT (CTS)'],
-            'default' => 0
-        ],
-        'RAP' => [
-            'header' => ['RAP' , 'RAP PRICE' , 'Price' , 'PRICE' , 'PRICE (RAP)'],
-            'default' => 0
-        ],
-        'discount' => [
-            'header' => ['discount' , 'DISCOUNT' , 'Discount Percent'],
-            'default' => 0
-        ],
-    ];
+        $this->headerMapping = [
+            'name' => [
+                'header' => ['name'],
+                'default' => null
+            ],
+            'description' => [
+                'header' => ['DESCRIPTION'],
+                'default' => 'No description available.'
+            ],
+            'short_description' => [
+                'header' => ['SHORT DESCRIPTION'],
+                'default' => 'No short description available.'
+            ],
+            'sku' => [
+                'header' => ['sku' , 'SKU' , 'Stock #' , 'RE FNO.' , 'RE FNO.Ψ' , 'Certificate #'],
+                'default' => null
+            ],
+            'igi_certificate' => [
+                'header' => ['CERTI LINK'],
+                'default' => null
+            ],
+            'category' => [
+                'header' => ['SHAPE' , 'Shape' ],
+                'default' => 'Uncategorized'
+            ],
+            'main_photo' => [
+                'header' => ['Image Link' , 'Image' , 'main_photo' ],
+                'default' => $this->defaultImage
+            ],
+            'photo_gallery' => [
+                'header' => ['photo_gallery' , 'photo_gallery' , 'photo_gallery' ],
+                'default' =>  json_encode($this->defaultImageGallery)
+            ],
+            'quantity' => [
+                'header' => ['quantity'],
+                'default' => 1
+            ],
+            'document_number' => [
+                'header' => ['REPORTNO' , 'REPORT #' , 'RE FNO.' , 'RE FNO.Ψ' , 'Certificate #'],
+                'default' => null
+            ],
+            'video_link' => [
+                'header' => ['video_link' , '360 VIDEO LINKS' , 'Video Link'],
+                'default' => null
+            ],
+            'location' => [
+                'header' => ['LOC' , 'LOCATION' , 'Location' , 'City'],
+                'default' => null
+            ],
+            'comment' => [
+                'header' => ['COMMENT' , 'COMMENT Ψ' , ],
+                'default' => null
+            ],
+            'CTS' => [
+                'header' => ['CTS', 'CARAT' , 'CARAT WEIGHT' , 'Weight' , 'WEIGHT' , 'WEIGHT (CTS)'],
+                'default' => 0
+            ],
+            'RAP' => [
+                'header' => ['RAP' , 'RAP PRICE' , 'Price' , 'PRICE' , 'PRICE (RAP)'],
+                'default' => 0
+            ],
+            'discount' => [
+                'header' => ['discount' , 'DISCOUNT' , 'Discount Percent'],
+                'default' => 0
+            ],
+        ];
+
+    }
 
     protected  $attributeMapping = [
-        'LOC' => ['location', 'LOC'],
-        'LAB' => ['lab', 'LAB'],
-        'SHAPE' => ['shape', 'SHAPE'],
-        'COLOR' => ['color', 'COLOR'],
-        'CLARITY' => ['clarity', 'CLARITY'],
-        'CUT' => ['cut', 'CUT'],
-        'POLISH' => ['polish', 'POLISH'],
-        'SYM' => ['sym', 'SYM'],
-        'FL' => ['fl', 'FL'],
-        'MEASUREMENT' => ['measurement', 'MEASUREMENT'],
-        'TBL' => ['tbl', 'TBL'],
-        'T.DEPTH' => ['t_depth', 'T.DEPTH'],
-        'TYPE' => ['type', 'TYPE']
+        'LOC' => ['location', 'LOC' , 'City'],
+        'LAB' => ['lab', 'LAB' , 'Lab'],
+        'SHAPE' => ['shape', 'SHAPE' , 'Shape'],
+        'COLOR' => ['color', 'COLOR' , 'Color'],
+        'CLARITY' => ['clarity', 'CLARITY' , 'Clarity'],
+        'CUT' => ['cut', 'CUT' , 'Cut Grade'],
+        'POLISH' => ['polish', 'POLISH' , 'Polish'],
+        'SYM' => ['sym', 'SYM' , 'Symmetry'],
+        'FL' => ['fl', 'FL' , 'Fluorescence Intensity'],
+        'MEASUREMENT' => ['measurement', 'MEASUREMENT' , 'Measurements'],
+        'TBL' => ['tbl', 'TBL' , 'Table Percent'],
+        'T.DEPTH' => ['t_depth', 'T.DEPTH' ,'Depth Percent'],
+        'TYPE' => ['type', 'TYPE' , 'Growth Type']
     ];
 
     /**
@@ -112,6 +125,7 @@ class ProductController extends Controller
 
     public function index()
     {
+
         $products=WpProduct::where('vendor_id',Auth::id())->orderBy('created_at', 'desc')->orderBy('wp_product_id','desc')->get();
         // return $products;
         return view('backend.product.index')->with('products',$products);
@@ -386,7 +400,6 @@ class ProductController extends Controller
     }
 
 
-
     public function  import(Request $request){
         $request->validate([
             'import_file' => 'required|mimes:csv,xlsx|max:2048',
@@ -426,8 +439,8 @@ class ProductController extends Controller
                 'sku' => $data[$mappedHeaders['sku'] ?? ''] ?? $headerMapping['sku']['default'] ?? null,
                 'stock_status' => 1,
                 'igi_certificate' => $data[$mappedHeaders['igi_certificate'] ?? ''] ?? $headerMapping['igi_certificate']['default'] ?? null,
-                'main_photo' => $data[$mappedHeaders['main_photo'] ?? ''] ?? $headerMapping['main_photo']['default'] ?? '[]',
-                'photo_gallery' => $data[$mappedHeaders['photo_gallery'] ?? ''] ?? '[]',
+                'main_photo' => $data[$mappedHeaders['main_photo'] ?? ''] ?? $headerMapping['main_photo']['default'] ?? $this->defaultImage,
+                'photo_gallery' => $data[$mappedHeaders['photo_gallery'] ?? ''] ?? json_encode($this->defaultImageGallery) ,
                 'quantity' => $data[$mappedHeaders['quantity'] ?? ''] ?? $headerMapping['quantity']['default'] ?? 1,
                 'document_number' => $data[$mappedHeaders['document_number'] ?? ''] ?? $headerMapping['document_number']['default'] ?? null,
                 'category' => $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized',
@@ -454,6 +467,8 @@ class ProductController extends Controller
             //category_id
             $category = Category::where('title', $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized')->first();
             $productData['category_id'] = $category->id ?? 15;
+            $mainPhoto = $category ? Category::getProductImageLink($category) : $this->defaultImage;
+            $productData['main_photo'] = $mainPhoto;
 
             if (empty($productData['name'])) {
                 $productData['name'] = $productData['CTS'] . ' ' . $productData['category'] . ' Shaped Loose Lab Grown Diamond';
@@ -512,7 +527,6 @@ class ProductController extends Controller
         return $mapped;
     }
 
-
     public function clearAllProducts(Request $request){
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
@@ -527,4 +541,5 @@ class ProductController extends Controller
 
         return redirect()->back()->with('success', 'All products deleted successfully.');
     }
+
 }

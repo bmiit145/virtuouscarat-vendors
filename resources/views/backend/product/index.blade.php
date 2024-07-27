@@ -18,7 +18,7 @@
                     <input id="importFile" type="file" name="import_file" accept=".csv,.xlsx" style="display: none;" onchange="this.form.submit()">
                 </label>
             </form>
-        <a href="{{route('product.create')}}" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>\
+        <a href="{{route('product.create')}}" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>
             <form method="post" action="{{ route('product.clearAll') }}">
                 @csrf
                 <button type="submit" class="btn btn-danger btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Delete All Products"><i class="fas fa-trash"></i> Delete All</button>
