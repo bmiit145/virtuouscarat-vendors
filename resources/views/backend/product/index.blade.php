@@ -10,8 +10,19 @@
      </div>
      <div class="card-header py-3">
       <h6 class="m-0 font-weight-bold text-primary float-left">Product Lists</h6>
-        <div class="float-right d-flex">  
-        <a href="{{route('product.create')}}" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>
+        <div class="float-right d-flex">
+            <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data" class="mr-1">
+                @csrf
+                <label for="importFile" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Import Products" style="height: 102%;">
+                    <i class="fas fa-file"></i> Import File
+                    <input id="importFile" type="file" name="import_file" accept=".csv,.xlsx" style="display: none;" onchange="this.form.submit()">
+                </label>
+            </form>
+        <a href="{{route('product.create')}}" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>\
+            <form method="post" action="{{ route('product.clearAll') }}">
+                @csrf
+                <button type="submit" class="btn btn-danger btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Delete All Products"><i class="fas fa-trash"></i> Delete All</button>
+            </form>
         <a href="#" class="btn btn-primary btn-sm mx-1 refresh_btn" >   <i class="fas fa-sync"></i></a>
         </div>
     </div>
@@ -26,7 +37,7 @@
               {{-- <th>Category</th> --}}
               <th>Sale / List Price</th>
 
-         
+
               <th>Stock Quantity</th>
               <th>Status</th>
               <th>Action</th>
@@ -47,9 +58,9 @@
                 <tr>
                   <td>{{$product->sku}}<sub>{{$product->Category->title}}</sub></td>
                     <td>{{$product->name}}</td>
-            
+
                     <td>₹{{$product->sale_price}} <sub>₹{{$product->regular_price}}</sub></td>
-           
+
                     <td>  {{$product->quantity }}</td>
                     <td>  @if($product->is_approvel == 0)
                               <button class="btn btn-sm btn-warning" style="cursor: unset;">Pendding</button>
@@ -82,7 +93,7 @@
             @endforeach
           </tbody>
         </table>
-      
+
       </div>
     </div>
 </div><!-- Visit 'codeastro' for more projects -->
@@ -93,7 +104,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
   <style>
       div.dataTables_wrapper div.dataTables_paginate{
-          display: none;
+          /*display: none;*/
       }
       .zoom {
         transition: transform .2s; /* Animation */
@@ -116,13 +127,13 @@
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
   <script>
 
- 
+
 
         $(document).ready(function() {
           $('#product-dataTable').DataTable({
             "paging": true,    // Enable pagination
             "ordering": false, // Disable sorting
-            "info": true  
+            "info": true
           });
         });
 

@@ -125,13 +125,14 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
 
     Route::post('/remove-gallery-image', 'ProductController@removeGalleryImage')->name('remove.gallery.image');
 
-    
-  
+
+
     // Category
     Route::resource('/category','CategoryController');
     // Product
     // Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
     Route::resource('product',ProductController::class);
+    Route::post('/product/clearAll' , 'ProductController@clearAllProducts')->name('product.clearAll');
     // Ajax for sub category
     Route::post('/category/{id}/child','CategoryController@getChildByParent');
     // POST category
@@ -162,6 +163,10 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     // Password Change
     Route::get('change-password', 'AdminController@changePassword')->name('change.password.form');
     Route::post('change-password', 'AdminController@changPasswordStore')->name('change.password');
+
+
+    //import done
+    Route::post('/product/import' , 'ProductController@import')->name('product.import');
 });
 
 

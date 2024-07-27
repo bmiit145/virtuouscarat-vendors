@@ -27,6 +27,14 @@ class WpProduct extends Model
         'vendor_id',
         'quantity',
         'document_number',
+        'CTS',
+        'RAP',
+        'price',
+        'discounted_price',
+        'discount',
+        'video_link',
+        'location',
+        'comment',
     ];
 
     public function category()

@@ -4,16 +4,100 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\WpProduct;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+
+
+    protected    $headerMapping = [
+        'name' => [
+            'header' => ['name'],
+            'default' => null
+        ],
+        'description' => [
+            'header' => ['DESCRIPTION'],
+            'default' => 'No description available.'
+        ],
+        'short_description' => [
+            'header' => ['SHORT DESCRIPTION'],
+            'default' => 'No short description available.'
+        ],
+        'sku' => [
+            'header' => ['sku' , 'SKU' , 'Stock #' , 'RE FNO.' , 'RE FNO.Ψ' , 'Certificate #'],
+            'default' => null
+        ],
+        'igi_certificate' => [
+            'header' => ['CERTI LINK'],
+            'default' => null
+        ],
+        'category' => [
+            'header' => ['SHAPE' , 'Shape' ],
+            'default' => 'Uncategorized'
+        ],
+        'main_photo' => [
+            'header' => ['Image Link' , 'Image' , 'main_photo' ],
+            'default' => '[]'
+        ],
+        'quantity' => [
+            'header' => ['quantity'],
+            'default' => 1
+        ],
+        'document_number' => [
+            'header' => ['REPORTNO' , 'REPORT #' , 'RE FNO.' , 'RE FNO.Ψ' , 'Certificate #'],
+            'default' => null
+        ],
+        'video_link' => [
+            'header' => ['video_link' , '360 VIDEO LINKS' , 'Video Link'],
+            'default' => null
+        ],
+        'location' => [
+            'header' => ['LOC' , 'LOCATION' , 'Location' , 'City'],
+            'default' => null
+        ],
+        'comment' => [
+            'header' => ['COMMENT' , 'COMMENT Ψ' , ],
+            'default' => null
+        ],
+        'CTS' => [
+            'header' => ['CTS', 'CARAT' , 'CARAT WEIGHT' , 'Weight' , 'WEIGHT' , 'WEIGHT (CTS)'],
+            'default' => 0
+        ],
+        'RAP' => [
+            'header' => ['RAP' , 'RAP PRICE' , 'Price' , 'PRICE' , 'PRICE (RAP)'],
+            'default' => 0
+        ],
+        'discount' => [
+            'header' => ['discount' , 'DISCOUNT' , 'Discount Percent'],
+            'default' => 0
+        ],
+    ];
+
+    protected  $attributeMapping = [
+        'LOC' => ['location', 'LOC'],
+        'LAB' => ['lab', 'LAB'],
+        'SHAPE' => ['shape', 'SHAPE'],
+        'COLOR' => ['color', 'COLOR'],
+        'CLARITY' => ['clarity', 'CLARITY'],
+        'CUT' => ['cut', 'CUT'],
+        'POLISH' => ['polish', 'POLISH'],
+        'SYM' => ['sym', 'SYM'],
+        'FL' => ['fl', 'FL'],
+        'MEASUREMENT' => ['measurement', 'MEASUREMENT'],
+        'TBL' => ['tbl', 'TBL'],
+        'T.DEPTH' => ['t_depth', 'T.DEPTH'],
+        'TYPE' => ['type', 'TYPE']
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -302,4 +386,145 @@ class ProductController extends Controller
     }
 
 
+
+    public function  import(Request $request){
+        $request->validate([
+            'import_file' => 'required|mimes:csv,xlsx|max:2048',
+        ]);
+
+        // read and store data in database as field as name , vendor , quantity
+        $file = $request->file('import_file');
+
+        set_time_limit(300);
+        $extension = $file->getClientOriginalExtension();
+        if (in_array($extension, ['xlsx', 'xls'])) {
+            $reader = IOFactory::createReader($extension === 'xls' ? 'Xls' : 'Xlsx');
+            $spreadsheet = $reader->load($file);
+            $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+        }
+        elseif ($file->getClientOriginalExtension() == 'csv') {
+            $rows = array_map('str_getcsv', file($file));
+        }
+
+        if (empty($rows)) {
+            return redirect()->route('product.index')->with('error', 'No data found in the file.');
+        }
+
+        $headers = array_shift($rows);
+        $headerMapping = $this->headerMapping;
+        $mappedHeaders = $this->mapHeaders($headers, $this->headerMapping);
+        $mappedAttributes = $this->mapAttributes($headers, $this->attributeMapping);
+        $count = 0;
+
+        foreach ($rows as $row) {
+            $data = array_combine($headers, $row);
+            $productData = [
+                'name' => $data[$mappedHeaders['name'] ?? ''] ?? $headerMapping['name']['default'] ?? null,
+                'vendor_id' => Auth::id(),
+                'description' => $data[$mappedHeaders['description'] ?? ''] ?? $headerMapping['description']['default'] ?? null,
+                'short_description' => $data[$mappedHeaders['short_description'] ?? ''] ?? $headerMapping['short_description']['default'] ?? null,
+                'sku' => $data[$mappedHeaders['sku'] ?? ''] ?? $headerMapping['sku']['default'] ?? null,
+                'stock_status' => 1,
+                'igi_certificate' => $data[$mappedHeaders['igi_certificate'] ?? ''] ?? $headerMapping['igi_certificate']['default'] ?? null,
+                'main_photo' => $data[$mappedHeaders['main_photo'] ?? ''] ?? $headerMapping['main_photo']['default'] ?? '[]',
+                'photo_gallery' => $data[$mappedHeaders['photo_gallery'] ?? ''] ?? '[]',
+                'quantity' => $data[$mappedHeaders['quantity'] ?? ''] ?? $headerMapping['quantity']['default'] ?? 1,
+                'document_number' => $data[$mappedHeaders['document_number'] ?? ''] ?? $headerMapping['document_number']['default'] ?? null,
+                'category' => $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized',
+                'video_link' => $data[$mappedHeaders['video_link'] ?? ''] ?? $headerMapping['video_link']['default'] ?? null,
+                'location' => $data[$mappedHeaders['location'] ?? ''] ?? $headerMapping['location']['default'] ?? null,
+                'comment' => $data[$mappedHeaders['comment'] ?? ''] ?? $headerMapping['comment']['default'] ?? null,
+                'CTS' => (float)($data[$mappedHeaders['CTS'] ?? ''] ?? $headerMapping['CTS']['default'] ?? 0),
+                'RAP' => (float)($data[$mappedHeaders['RAP'] ?? ''] ?? $headerMapping['RAP']['default'] ?? 0),
+//                    'discount' => $data[$mappedHeaders['discount'] ?? ''] ?? $headerMapping['discount']['default'] ?? 0,
+                'discount' => abs((float)$data[$mappedHeaders['discount'] ?? ''] ?? $headerMapping['discount']['default'] ?? 0),
+            ];
+
+            if ($productData['sku'] == null || !is_numeric($productData['CTS']) || !is_numeric($productData['RAP']) || $productData['CTS'] == null || $productData['RAP'] == null) {
+                continue;
+            }
+
+            $productData['price'] = $productData['CTS'] * $productData['RAP'];
+            $productData['discounted_price'] = $productData['price'] - ($productData['price'] * $productData['discount'] / 100);
+
+            // add 10 % commission
+            $productData['regular_price'] = $productData['price'] + ($productData['price'] * 10 / 100);
+            $productData['sale_price'] = $productData['discounted_price'] + ($productData['discounted_price'] * 10 / 100);
+
+            //category_id
+            $category = Category::where('title', $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized')->first();
+            $productData['category_id'] = $category->id ?? 15;
+
+            if (empty($productData['name'])) {
+                $productData['name'] = $productData['CTS'] . ' ' . $productData['category'] . ' Shaped Loose Lab Grown Diamond';
+            }
+
+            // Create the product
+            $product = WpProduct::create($productData);
+            if ($product) {
+                $count++;
+                // Map and create product attributes
+                foreach ($mappedAttributes as $dbField => $excelHeader) {
+                    if (isset($data[$excelHeader])) {
+                        ProductAttribute::create([
+                            'product_id' => $product->id,
+                            'name' => $dbField,
+                            'value' => $data[$excelHeader],
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('product.index')->with('success! ', $count . ' Products imported successfully.');
+
+    }
+
+    protected function mapHeaders($headers, $headerMapping)
+    {
+        $mapped = [];
+
+        foreach ($headerMapping as $dbField => $mapping) {
+            foreach ($mapping['header'] as $possibleHeader) {
+                if (in_array($possibleHeader, $headers)) {
+                    $mapped[$dbField] = $possibleHeader;
+                    break;
+                }
+            }
+        }
+
+        return $mapped;
+    }
+
+    protected function mapAttributes($headers, $attributeMapping)
+    {
+        $mapped = [];
+
+        foreach ($attributeMapping as $dbField => $mapping) {
+            foreach ($mapping as $possibleAttribute) {
+                if (in_array($possibleAttribute, $headers)) {
+                    $mapped[$dbField] = $possibleAttribute;
+                    break;
+                }
+            }
+        }
+
+        return $mapped;
+    }
+
+
+    public function clearAllProducts(Request $request){
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        ProductAttribute::whereHas('product', function ($query) {
+            $query->where('vendor_id', Auth::id());
+        })->delete();
+
+        WpProduct::where('vendor_id', Auth::id())->delete();
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        return redirect()->back()->with('success', 'All products deleted successfully.');
+    }
 }
