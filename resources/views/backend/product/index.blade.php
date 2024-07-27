@@ -8,9 +8,12 @@
             @include('backend.layouts.notification')
          </div>
      </div>
-    <div class="card-header py-3">
+     <div class="card-header py-3">
       <h6 class="m-0 font-weight-bold text-primary float-left">Product Lists</h6>
-      <a href="{{route('product.create')}}" class="btn btn-primary btn-sm float-right" data-toggle="tooltip" data-placement="bottom" title="Add User"><i class="fas fa-plus"></i> Add Product</a>
+        <div class="float-right d-flex">  
+        <a href="{{route('product.create')}}" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>
+        <a href="#" class="btn btn-primary btn-sm mx-1 refresh_btn" >   <i class="fas fa-sync"></i></a>
+        </div>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -57,14 +60,23 @@
                          @endif
                     </td>
                     <td>
-                      @if($product->is_approvel == 0)
-                        <a href="{{route('product.edit',$product->id)}}" class="btn  btn-sm float-left mr-1" style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" title="edit" data-placement="bottom"><i class="fas fa-edit"></i></a>
-                    <form method="POST" action="{{route('product.destroy',[$product->id])}}">
-                      @csrf
-                      @method('DELETE')
-                          <button class="btn  btn-sm dltBtn" data-id={{$product->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
-                        </form>
-                        @endif
+                     <div style="text-align: center">
+                    <a  id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                      <i class="fas fa-ellipsis-v"></i>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="actionMenu">
+                      <a class="dropdown-item" href="{{route('product.edit', $product->id)}}" data-toggle="tooltip" title="Edit" data-placement="bottom">
+                        <i class="fas fa-edit"></i> Edit
+                      </a>
+                      <form method="POST" action="{{route('product.destroy', $product->id)}}" style="display:inline;">
+                        @csrf
+                        @method('delete')
+                        <button class="dropdown-item" type="submit" data-id={{$product->id}} data-toggle="tooltip" data-placement="bottom" title="Delete">
+                          <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                      </form>
+                    </div>
+                  </div>
                     </td>
                 </tr>
             @endforeach
@@ -149,4 +161,10 @@
           })
       })
   </script>
+   <script>
+    document.querySelector('.refresh_btn').addEventListener('click', function(event) {
+        event.preventDefault();
+        location.reload();
+    });
+</script>
 @endpush

@@ -1,6 +1,20 @@
 @extends('backend.layouts.master')
 
 @section('main-content')
+<style>
+
+    .table tbody tr {
+        transition: background-color 0.3s ease; 
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f1f1; 
+    }
+
+    .table tbody tr.highlight-hover {
+        background-color: #f1f1f1; 
+    }
+</style>
  <!-- DataTales Example -->
  <div class="card shadow mb-4">
      <div class="row">
@@ -8,9 +22,11 @@
             @include('backend.layouts.notification')
          </div>
      </div>
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
-    </div>
+     <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+        <a href="#" class="btn btn-primary btn-sm mx-1 refresh_btn" >   <i class="fas fa-sync"></i></a>
+  
+      </div>
     <div class="card-body">
       <div class="table-responsive">
 
@@ -95,6 +111,7 @@
                             <input type="hidden" name="order_id" value="{{ $order->order_id }}">
                             <input type="hidden" name="product_id" value="{{ $product->product_id }}">
                             <select name="order-action-select" class="form-control" style="margin-right: 10px;" onchange="enableSubmitButton(this)" onfocus="enableSubmitButton(this)">
+                                             <option value="0" {{ $product->is_fulfilled == 1 ? 'selected' : '' }}> -- Select status --</option>
                                             <option value="1" {{ $product->is_fulfilled == 1 ? 'selected' : '' }}>Approved</option>
                                         <option value="2" {{ $product->is_fulfilled == 2 ? 'selected' : '' }}>Rejected</option>
                                     </select>
@@ -134,6 +151,12 @@
 
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
+  <script>
+    document.querySelector('.refresh_btn').addEventListener('click', function(event) {
+        event.preventDefault();
+        location.reload();
+    });
+</script>
   <script>
 
 
@@ -238,4 +261,15 @@
   });
 
     </script>
+        <script>
+            $(document).ready(function() {
+                $('tr').hover(function() {
+                    var orderId = $(this).data('order_id');
+                    $('tr[data-order_id="' + orderId + '"]').addClass('highlight-hover');
+                }, function() {
+                    var orderId = $(this).data('order_id');
+                    $('tr[data-order_id="' + orderId + '"]').removeClass('highlight-hover');
+                });
+            });
+        </script>
 @endpush
