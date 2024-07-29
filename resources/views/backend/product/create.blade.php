@@ -37,7 +37,7 @@
           @enderror
         </div>
 
-        
+
         <div class="form-group">
           <label for="description" class="col-form-label">Description</label>
           <textarea class="form-control" id="description" name="description">{{old('description')}}</textarea>
@@ -59,11 +59,11 @@
 
         {{-- <div class="form-group">
           <label for="is_featured">Is Featured</label><br>
-          <input type="checkbox" name='is_featured' id='is_featured' value='1' checked> Yes                        
+          <input type="checkbox" name='is_featured' id='is_featured' value='1' checked> Yes
         </div> --}}
-              
+
         {{-- {{$categories}} --}}
-        
+
 
         {{-- <div class="form-group d-none" id="child_cat_div">
           <label for="child_cat_id">Sub Category</label>
@@ -75,21 +75,56 @@
           </select>
         </div> --}}
 
-        <div class="form-group">
-          <label for="price" class="col-form-label">List Price(₹) <span class="text-danger">*</span></label>
-          <input id="price" type="number" name="price" placeholder="Enter price" min="0"  value="{{old('price')}}" class="form-control">
-          @error('price')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
+{{--        <div class="form-group">--}}
+{{--          <label for="price" class="col-form-label">List Price(₹) <span class="text-danger">*</span></label>--}}
+{{--          <input id="price" type="number" name="price" placeholder="Enter price" min="0"  value="{{old('price')}}" class="form-control">--}}
+{{--          @error('price')--}}
+{{--          <span class="text-danger">{{$message}}</span>--}}
+{{--          @enderror--}}
+{{--        </div>--}}
 
-        <div class="form-group">
-          <label for="sale_price" class="col-form-label">Sale Price(₹)</label>
-          <input id="sale_price" type="number" name="sale_price" min="0" placeholder="Enter Sale Price"  value="{{old('sale_price')}}" class="form-control">
-          @error('sale_price')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
+{{--        <div class="form-group">--}}
+{{--          <label for="sale_price" class="col-form-label">Sale Price(₹)</label>--}}
+{{--          <input id="sale_price" type="number" name="sale_price" min="0" placeholder="Enter Sale Price"  value="{{old('sale_price')}}" class="form-control">--}}
+{{--          @error('sale_price')--}}
+{{--          <span class="text-danger">{{$message}}</span>--}}
+{{--          @enderror--}}
+{{--        </div>--}}
+
+            <div class="form-group">
+                <label for="CTS" class="col-form-label">Carat Weight<span class="text-danger">*</span></label>
+                <input id="CTS" type="number" name="CTS" min="0" placeholder="Enter Sale Price"  value="{{old('CTS')}}" class="form-control" step="any">
+                @error('CTS')
+                  <span class="text-danger">{{$message}}</span>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="RAP" class="col-form-label">RAP ( Rate Per Carat ($) )<span class="text-danger">*</span></label>
+                <input id="RAP" type="number" name="RAP" min="0" placeholder="Enter Sale Price"  value="{{old('RAP')}}" class="form-control" step="any">
+                @error('RAP')
+                  <span class="text-danger">{{$message}}</span>
+                @enderror
+            </div>
+          <div class="form-group">
+              <label for="total_price" class="col-form-label font-weight-bold text-primary">
+                  Total Price: <span id="totalPriceLabel">$0</span>
+              </label>
+          </div>
+            <div class="form-group">
+                <label for="discount" class="col-form-label">Discount (%)</label>
+                <input id="discount" type="number" name="discount" min="0" max="100" placeholder="Enter Sale Price"  value="{{old('discount' , 0)}}" class="form-control" step="any">
+                @error('discount')
+                  <span class="text-danger">{{$message}}</span>
+                @enderror
+            </div>
+          <div class="form-group">
+              <label for="discounted_price" class="col-form-label font-weight-bold text-primary">
+                  Discounted Price: <span id="discountedPriceLabel">$0</span>
+              </label><br/>
+              <label for="listed_price" class="col-form-label font-weight-bold text-primary">
+                  Listed Price: <span id="listedPriceLabel">$0</span>
+              </label>
+          </div>
 
       {{-- SKU --}}
 
@@ -100,13 +135,16 @@
           <span class="text-danger">{{$message}}</span>
           @enderror
         </div>
-        <div class="form-group">
-          <label for="quantity" class="col-form-label">Quantity <span class="text-danger">*</span></label>
-          <input id="number" type="number" name="quantity" placeholder="Quantity"  value="{{old('quantity')}}" class="form-control">
-          @error('quantity')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
+
+{{--          Quantity --}}
+
+{{--        <div class="form-group">--}}
+{{--          <label for="quantity" class="col-form-label">Quantity <span class="text-danger">*</span></label>--}}
+{{--          <input id="number" type="number" name="quantity" placeholder="Quantity"  value="{{old('quantity')}}" class="form-control">--}}
+{{--          @error('quantity')--}}
+{{--          <span class="text-danger">{{$message}}</span>--}}
+{{--          @enderror--}}
+{{--        </div>--}}
 
         {{-- Stock Status --}}
         {{-- <label class="col-form-label">Stock Status <span class="text-danger">*</span></label>
@@ -137,7 +175,7 @@
           </div>
       </div> --}}
 
-      
+
       <div class="form-group">
         <label for="IGI_certificate" class="col-form-label">IGI Certificate link<span class="text-danger">*</span></label>
         <input id="IGI_certificate" type="text" name="IGI_certificate" placeholder="IGI Certificate Link"  value="{{old('IGI_cert')}}" class="form-control">
@@ -148,14 +186,14 @@
 
 
       {{-- Attribute --}}
-      
+
       @php
       $attributes = [
           'Type' => 'Lab Grown Diamond',
           'Shape' => 'Round Brilliant',
           'Carat Weight' => '0.38 ct',
           'Cut' => 'Ideal',
-          'Colour' => 'E',
+          'Color' => 'E',
           'Clarity' => 'VS1',
           'Fluorescence' => 'None',
           'Growth Method' => 'CVD',
@@ -178,7 +216,7 @@
                          @if ($attribute === 'Type') disabled @endif>
               </div>
           </div>
-          
+
           @if (($loop->iteration % 3) == 0 && !$loop->last)
               </div><div class="row">
           @endif
@@ -288,6 +326,13 @@
         <span class="text-danger">{{$message}}</span>
   @enderror
 </div>
+      <div class="form-group">
+          <label for="video_link" class="col-form-label">Video Link<span class="text-danger">*</span></label>
+          <input id="video_link" type="text" name="video_link" placeholder="Video Link"  value="{{old('video_link')}}" class="form-control">
+          @error('video_link')
+          <span class="text-danger">{{$message}}</span>
+          @enderror
+      </div>
 
 
         {{-- <div class="form-group">
@@ -307,6 +352,7 @@
       </form>
     </div>
 </div>
+
 
 @endsection
 
@@ -422,7 +468,7 @@
   function toggleQuantityField() {
       var inStock = document.getElementById('inStock').checked;
       var quantityField = document.getElementById('quantityField');
-      
+
       if (inStock) {
           quantityField.style.display = 'block';
       } else {
@@ -478,4 +524,36 @@
       });
   });
 </script> -->
+
+    <script>
+        // Calculate total price
+        function calculateTotalPrice() {
+            var CTS = parseFloat(document.getElementById('CTS').value) || 0;
+            var RAP = parseFloat(document.getElementById('RAP').value) || 0;
+            var discount = parseFloat(document.getElementById('discount').value) || 0;
+
+            var totalPrice = CTS * RAP;
+            var discountedPrice = totalPrice - (totalPrice * discount / 100);
+            var listedPrice = discountedPrice + (discountedPrice * 10 / 100);
+
+            document.getElementById('totalPriceLabel').innerText = '$' + totalPrice.toFixed(2);
+            document.getElementById('discountedPriceLabel').innerText = '$' + discountedPrice.toFixed(2);
+            document.getElementById('listedPriceLabel').innerText = '$' + listedPrice.toFixed(2);
+        }
+
+        // Calculate total price on input change
+        document.getElementById('CTS').addEventListener('input', calculateTotalPrice);
+        document.getElementById('RAP').addEventListener('input', calculateTotalPrice);
+        document.getElementById('discount').addEventListener('input', calculateTotalPrice);
+
+        // Calculate total price on page load
+        calculateTotalPrice();
+
+
+        // show Caret Weight at attribute
+        document.getElementById('CTS').addEventListener('input', function() {
+            var CTS = parseFloat(document.getElementById('CTS').value) || 0;
+            document.getElementById('carat_weight').value = CTS + ' ct';
+        });
+    </script>
 @endpush
