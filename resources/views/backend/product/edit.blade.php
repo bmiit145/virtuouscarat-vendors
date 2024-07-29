@@ -49,22 +49,57 @@
 
 
 
-                <div class="form-group">
-                    <label for="price" class="col-form-label">Regular Price($) <span class="text-danger">*</span></label>
-                    <input id="price" type="number" name="price" placeholder="Enter price" min="0"
-                        value="{{ $product->regular_price }}" class="form-control">
-                    @error('price')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+{{--                <div class="form-group">--}}
+{{--                    <label for="price" class="col-form-label">Regular Price($) <span class="text-danger">*</span></label>--}}
+{{--                    <input id="price" type="number" name="price" placeholder="Enter price" min="0"--}}
+{{--                        value="{{ $product->regular_price }}" class="form-control">--}}
+{{--                    @error('price')--}}
+{{--                        <span class="text-danger">{{ $message }}</span>--}}
+{{--                    @enderror--}}
+{{--                </div>--}}
+
+{{--                <div class="form-group">--}}
+{{--                    <label for="sale_price" class="col-form-label">Sale Price($)</label>--}}
+{{--                    <input id="sale_price" type="number" name="sale_price" min="0" placeholder="Enter Sale Price"--}}
+{{--                        value="{{ $product->sale_price }}" class="form-control">--}}
+{{--                    @error('sale_price')--}}
+{{--                        <span class="text-danger">{{ $message }}</span>--}}
+{{--                    @enderror--}}
+{{--                </div>--}}
 
                 <div class="form-group">
-                    <label for="sale_price" class="col-form-label">Sale Price($)</label>
-                    <input id="sale_price" type="number" name="sale_price" min="0" placeholder="Enter Sale Price"
-                        value="{{ $product->sale_price }}" class="form-control">
-                    @error('sale_price')
-                        <span class="text-danger">{{ $message }}</span>
+                    <label for="CTS" class="col-form-label">Carat Weight<span class="text-danger">*</span></label>
+                    <input id="CTS" type="number" name="CTS" min="0" placeholder="Enter Sale Price"  value="{{old('CTS' , $product->CTS)}}" class="form-control" step="any">
+                    @error('CTS')
+                    <span class="text-danger">{{$message}}</span>
                     @enderror
+                </div>
+                <div class="form-group">
+                    <label for="RAP" class="col-form-label">RAP ( Rate Per Carat ($) )<span class="text-danger">*</span></label>
+                    <input id="RAP" type="number" name="RAP" min="0" placeholder="Enter Sale Price"  value="{{old('RAP' , $product->RAP)}}" class="form-control" step="any">
+                    @error('RAP')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="total_price" class="col-form-label font-weight-bold text-primary">
+                        Total Price: <span id="totalPriceLabel">$0</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="discount" class="col-form-label">Discount (%)</label>
+                    <input id="discount" type="number" name="discount" min="0" max="100" placeholder="Enter Sale Price"  value="{{old('discount' , $product->discount)}}" class="form-control" step="any">
+                    @error('discount')
+                    <span class="text-danger">{{$message}}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="discounted_price" class="col-form-label font-weight-bold text-primary">
+                        Discounted Price: <span id="discountedPriceLabel">$0</span>
+                    </label><br/>
+                    <label for="listed_price" class="col-form-label font-weight-bold text-primary">
+                        Listed Price: <span id="listedPriceLabel">$0</span>
+                    </label>
                 </div>
 
                 {{-- SKU --}}
@@ -79,40 +114,41 @@
                 </div>
 
                 {{-- Stock Status --}}
-                <label class="col-form-label">Stock Status <span class="text-danger">*</span></label>
-                <div class="container mt-4">
-                    <div class="form-group">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="productStatus" id="inStock"
-                                value="1" onclick="toggleQuantityField()"
-                                {{ $product->stock_status == 1 ? 'checked' : '' }}>
-                            <label class="form-check-label" for="inStock">
-                                In Stock
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="productStatus" id="outOfStock"
-                                value="0" onclick="toggleQuantityField()"
-                                {{ $product->stock_status == 0 ? 'checked' : '' }}>
-                            <label class="form-check-label" for="outOfStock">
-                                Out of Stock
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="productStatus" id="onBackOrder"
-                                value="2" onclick="toggleQuantityField()"
-                                {{ $product->stock_status == 2 ? 'checked' : '' }}>
-                            <label class="form-check-label" for="onBackOrder">
-                                On Backorder
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group" id="quantityField" style="display: none;">
-                        <label for="quantity" class="col-form-label">Quantity</label>
-                        <input type="number" class="form-control" name="quantity" id="quantity" min="1"
-                            value="{{ $product->quantity }}">
-                    </div>
-                </div>
+
+{{--                <label class="col-form-label">Stock Status <span class="text-danger">*</span></label>--}}
+{{--                <div class="container mt-4">--}}
+{{--                    <div class="form-group">--}}
+{{--                        <div class="form-check">--}}
+{{--                            <input class="form-check-input" type="radio" name="productStatus" id="inStock"--}}
+{{--                                value="1" onclick="toggleQuantityField()"--}}
+{{--                                {{ $product->stock_status == 1 ? 'checked' : '' }}>--}}
+{{--                            <label class="form-check-label" for="inStock">--}}
+{{--                                In Stock--}}
+{{--                            </label>--}}
+{{--                        </div>--}}
+{{--                        <div class="form-check">--}}
+{{--                            <input class="form-check-input" type="radio" name="productStatus" id="outOfStock"--}}
+{{--                                value="0" onclick="toggleQuantityField()"--}}
+{{--                                {{ $product->stock_status == 0 ? 'checked' : '' }}>--}}
+{{--                            <label class="form-check-label" for="outOfStock">--}}
+{{--                                Out of Stock--}}
+{{--                            </label>--}}
+{{--                        </div>--}}
+{{--                        <div class="form-check">--}}
+{{--                            <input class="form-check-input" type="radio" name="productStatus" id="onBackOrder"--}}
+{{--                                value="2" onclick="toggleQuantityField()"--}}
+{{--                                {{ $product->stock_status == 2 ? 'checked' : '' }}>--}}
+{{--                            <label class="form-check-label" for="onBackOrder">--}}
+{{--                                On Backorder--}}
+{{--                            </label>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="form-group" id="quantityField" style="display: none;">--}}
+{{--                        <label for="quantity" class="col-form-label">Quantity</label>--}}
+{{--                        <input type="number" class="form-control" name="quantity" id="quantity" min="1"--}}
+{{--                            value="{{ $product->quantity }}">--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
 
                 <div class="form-group">
@@ -125,15 +161,15 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="document_number" class="col-form-label">Document Number<span
-                            class="text-danger">*</span></label>
-                    <input id="IGI_certificate" type="text" name="document_number" placeholder="Document Number"
-                        value="{{ $product->document_number }}" class="form-control">
-                    @error('document_number')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+{{--                <div class="form-group">--}}
+{{--                    <label for="document_number" class="col-form-label">Document Number<span--}}
+{{--                            class="text-danger">*</span></label>--}}
+{{--                    <input id="IGI_certificate" type="text" name="document_number" placeholder="Document Number"--}}
+{{--                        value="{{ $product->document_number }}" class="form-control">--}}
+{{--                    @error('document_number')--}}
+{{--                        <span class="text-danger">{{ $message }}</span>--}}
+{{--                    @enderror--}}
+{{--                </div>--}}
 
                 {{-- Attribute --}}
 
@@ -232,6 +268,14 @@
 
                         </div>
                         <span id="galleryError" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="video_link" class="col-form-label">Video Link<span class="text-danger">*</span></label>
+                        <input id="video_link" type="text" name="video_link" placeholder="Video Link"  value="{{old('video_link' , $product->video_link)}}" class="form-control">
+                        @error('video_link')
+                        <span class="text-danger">{{$message}}</span>
+                        @enderror
                     </div>
                     <div class="form-group mb-3">
                         <button class="btn btn-success" type="submit">Update</button>
@@ -399,5 +443,37 @@
         }
 
         toggleQuantityField();
+    </script>
+
+    <script>
+        // Calculate total price
+        function calculateTotalPrice() {
+            var CTS = parseFloat(document.getElementById('CTS').value) || 0;
+            var RAP = parseFloat(document.getElementById('RAP').value) || 0;
+            var discount = parseFloat(document.getElementById('discount').value) || 0;
+
+            var totalPrice = CTS * RAP;
+            var discountedPrice = totalPrice - (totalPrice * discount / 100);
+            var listedPrice = discountedPrice + (discountedPrice * 10 / 100);
+
+            document.getElementById('totalPriceLabel').innerText = '$' + totalPrice.toFixed(2);
+            document.getElementById('discountedPriceLabel').innerText = '$' + discountedPrice.toFixed(2);
+            document.getElementById('listedPriceLabel').innerText = '$' + listedPrice.toFixed(2);
+        }
+
+        // Calculate total price on input change
+        document.getElementById('CTS').addEventListener('input', calculateTotalPrice);
+        document.getElementById('RAP').addEventListener('input', calculateTotalPrice);
+        document.getElementById('discount').addEventListener('input', calculateTotalPrice);
+
+        // Calculate total price on page load
+        calculateTotalPrice();
+
+
+        // show Caret Weight at attribute
+        document.getElementById('CTS').addEventListener('input', function() {
+            var CTS = parseFloat(document.getElementById('CTS').value) || 0;
+            document.getElementById('carat_weight').value = CTS + ' ct';
+        });
     </script>
 @endpush

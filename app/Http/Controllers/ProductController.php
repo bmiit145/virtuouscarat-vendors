@@ -226,18 +226,29 @@ class ProductController extends Controller
             $product->photo_gallery = json_encode($galleryPaths);
         }
 
+        $price = $request->CTS * $request->RAP;
+        $discounted_price = $price - ($price * $request->discount / 100);
+        $regular_price = $price + ($price * 10 / 100);
+        $sale_price = $discounted_price + ($discounted_price * 10 / 100);
+
         // Update product fields
         $product->category_id = $request->category_id;
         $product->name = $request->prod_name;
         $product->description = $request->description;
         $product->short_description = $request->short_desc;
-        $product->regular_price = $request->price;
-        $product->sale_price = $request->sale_price;
+        $product->CTS = $request->CTS;
+        $product->RAP = $request->RAP;
+        $product->price = $price;
+        $product->discount = $request->discount;
+        $product->discounted_price = $discounted_price;
+        $product->regular_price = $regular_price;
+        $product->sale_price = $sale_price;
         $product->sku = $request->sku;
         $product->stock_status = 1;
         $product->igi_certificate = $request->IGI_certificate;
-        $product->quantity = $request->quantity;
-        $product->document_number = $request->document_number;
+        $product->quantity = $request->quantity ?? 1;
+        $product->document_number = $request->document_number ?? 123;
+        $product->video_link = $request->video_link;
 
         // Update product attributes
         if ($request->has('attributes')) {
