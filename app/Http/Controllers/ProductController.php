@@ -414,7 +414,7 @@ class ProductController extends Controller
                 }
             }
 
-            return redirect()->route('product.index')->with('success', 'Products imported successfully.');
+            return redirect()->route('product.index')->with('success', 'Products Created successfully.');
     }
 
 
