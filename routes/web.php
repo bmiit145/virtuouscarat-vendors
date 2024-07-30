@@ -159,7 +159,8 @@ Route::post('/update-business-info', [AdminController::class, 'updateBusinessInf
     // Settings
     Route::get('settings','AdminController@settings')->name('settings');
     Route::post('setting/update','AdminController@settingsUpdate')->name('settings.update');
-    Route::post('/verify-otp','AdminController@verifyOtpAndUpdateSetting')->name('verifyOtpAndUpdateSetting');
+    Route::post('/send-otp' , 'AdminController@sendOtp')->name('sendSettingOtp');
+    Route::post('/verify-otp','AdminController@verifyOtpSetting')->name('verifySettingOtp');
 
     // Notification
     Route::get('/notification/{id}','NotificationController@show')->name('admin.notification');

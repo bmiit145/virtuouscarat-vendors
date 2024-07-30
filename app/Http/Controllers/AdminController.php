@@ -53,7 +53,7 @@ class AdminController extends Controller
     public function settings(){
         $data=  User::where('id', Auth::user()->id)->first();
         $user = Userdetails::where('user_id', $data->id)->first();
-        
+
         return view('backend.setting', compact('data','user'));
     }
 
@@ -137,7 +137,6 @@ class AdminController extends Controller
         ]);
 
         $id = Auth::user()->id;
-        $otp = rand(100000, 999999);
 
         $user = User::find($id);
         $user->update([
@@ -147,19 +146,15 @@ class AdminController extends Controller
             'alternate_email' => $request->contact_person_alternate_email,
         ]);
 
-        $email = $user->email;
-        Mail::to($email)->send(new SendOtpMail($otp));
-
         return response()->json([
             'success' => true,
-            'message' => 'OTP sent to email. Please verify to update settings.'
+            'message' => 'Personal details updated successfully.'
         ]);
     }
 
-    
+
     public function updateBusinessInfo(Request $request)
     {
-        dd($request->all());
         $validatedData = $request->validate([
             'business_name' => 'required|string|max:255',
             'business_type' => 'required|string|max:255',
@@ -169,10 +164,9 @@ class AdminController extends Controller
             'brand_name' => 'required|string|max:255',
             'gst_number' => 'required|string|max:15',
         ]);
-    
+
         $id = Auth::user()->id;
-        $otp = rand(100000, 999999);
-    
+
         $business_data = Userdetails::updateOrCreate(
             ['user_id' => $id],
             [
@@ -183,33 +177,49 @@ class AdminController extends Controller
                 'ifsc_code' => $request->ifsc_code,
                 'brand_name' => $request->brand_name,
                 'gst' => $request->gst_number,
-                'otp' => $otp,
             ]
         );
-    
-        $email = Auth::user()->email;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Business details updated successfully.'
+        ]);
+    }
+
+    public function sendOtp(Request $request)
+    {
+        $id = Auth::user()->id;
+        $otp = rand(100000, 999999);
+
+        $userDetails = Userdetails::where('user_id', $id)->first() ?? new Userdetails();
+        $userDetails->user_id = $id;
+        $userDetails->otp = $otp;
+        $userDetails->save();
+
+        $user = User::find($id);
+        $email = $user->email;
         Mail::to($email)->send(new SendOtpMail($otp));
-    
+
         return response()->json([
             'success' => true,
             'message' => 'OTP sent to email. Please verify to update settings.'
         ]);
     }
-    
-    public function verifyOtpAndUpdateSetting(Request $request)
+
+    public function verifyOtpSetting(Request $request)
     {
-        dd($request->all());
         // Validate the OTP
         $validatedData = $request->validate([
             'otp' => 'required|integer',
         ]);
-    
+
         // Fetch the authenticated user's ID
         $id = Auth::user()->id;
-    
+
         // Fetch business details
         $business_data = Userdetails::where('user_id', $id)->first();
-    
+
+
         // Check if the OTP matches
         if ($business_data->otp != $request->otp) {
             return response()->json([
@@ -217,36 +227,18 @@ class AdminController extends Controller
                 'message' => 'Invalid OTP. Please try again.'
             ], 400);
         }
-        // Update user details
-        $user = User::where('id', $id)->first();
-        // dd($user);
-        $user->phone = $request->phone;
-        $user->name = $request->name;
-        $user->alternate_mail = $request->alternate_mail;
-        $user->alternate_number = $request->alternate_number;
-        $user->gst_number = $request->gst_number;
-        $user->update();
-    
+
         // // Update business details
-        // $business_data->update([
-        //     'business_name' => $request->business_name,
-        //     'business_type' => $request->business_type,
-        //     'bank_name' => $request->bank_name,
-        //     'account_number' => $request->bank_account_number,
-        //     'ifsc_code' => $request->ifsc_code,
-        //     'brand_name' => $request->brand_name,
-        //     'gst' => $request->gst_number,
-        //     'otp' => null // Clear the OTP after verification
-        // ]);
-    
+         $business_data->update([
+             'otp' => null // Clear the OTP after verification
+         ]);
+
         // Return a JSON response with success message and updated data
         return response()->json([
             'success' => true,
             'message' => 'Settings updated successfully.',
-            'user' => $user,
-            // 'business_details' => $business_data
         ]);
     }
-    
-    
+
+
 }

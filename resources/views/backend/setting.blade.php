@@ -32,7 +32,7 @@
                     <a class="nav-link" id="kyc-info-tab" data-toggle="tab" href="#kyc-info" role="tab" aria-controls="kyc-info" aria-selected="false">KYC Information</a>
                 </li>
             </ul>
-            
+
 
             <div class="tab-content" id="myTabContent">
                 <!-- Personal Information Tab -->
@@ -41,7 +41,7 @@
                     <div class="card">
                         <h5 class="card-header">Personal Information</h5>
                         <div class="card-body">
-                            <form id="personal_conatct_form">     
+                            <form id="personal_conatct_form">
                                 <div class="row">
                                     <div class="form-group col-6">
                                         <label for="contact_person_name" class="col-form-label"><b>Contact Person Name</b><span
@@ -92,7 +92,7 @@
                                     </div>
 
                                     <div class="form-group col-12 mb-3 d-flex justify-content-center">
-                                        <button class="btn btn-info p_update_btn" type="submit">Update Personal
+                                        <button class="btn btn-info p_update_btn" type="button" onclick="sendUpdateOTP()">Update Personal
                                             Information</button>
                                     </div>
 
@@ -166,7 +166,7 @@
                                 <div class="form-group col-6">
                                     <label for="gst_number" class="col-form-label"><b>GST Number</b><span
                                             class="text-danger"></span></label>
-                                    <input type="text" value="{{ $data->gst_number ?? '' }}" id="gst_number"
+                                    <input type="text" value="{{ $user->gst ?? '' }}" id="gst_number"
                                         class="form-control" name="gst_number" required>
                                     @error('gst_number')
                                         <span class="text-danger">{{ $message }}</span>
@@ -174,7 +174,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-12 mb-3 d-flex justify-content-center">
-                                <button class="btn btn-info b_update_btn" type="submit">Update Business
+                                <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP()">Update Business
                                     Information</button>
                             </div>
                         </div>
@@ -309,6 +309,95 @@
                     toast.css('visibility', 'hidden');
                 }, 3000);
             }
+            function sendUpdateOTP() {
+                // send OTP to the user by ajax route sendSettingOtp
+                var url = '{{ route('sendSettingOtp') }}';
+                var id = $('#id').val();
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        $('#otpModal').modal('show');
+                    },
+                    error: function(response) {
+                        toastr.error(response.responseJSON.message);
+                    }
+                });
+            }
+
+
+            function updatePersonalInfo(){
+                var url = '{{ route('updatePersonalInfo') }}';
+                var formData = {
+                    id : $('#id').val(),
+                    contact_person_name: $('#contact_person_name').val(),
+                    contact_person_mobile: $('#contact_person_mobile').val(),
+                    contact_person_alternate_number: $('#contact_person_alternate_number').val(),
+                    contact_person_alternate_email: $('#contact_person_alternate_email').val(),
+                    _token: '{{ csrf_token() }}'
+                };
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        toast.success(response.message);
+                        $('#otp').val('');
+                        $('#otpModal').modal('hide');
+                    },
+                    error: function(response) {
+                        $('#otp').val('');
+                        $('#otpModal').modal('hide');
+                        let errors = response.responseJSON.errors;
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                toastr.error(errors[key][0]);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateBusinessInfo(){
+                var url = '{{ route('updateBusinessInfo') }}';
+                var formData = {
+                    id : $('#id').val(),
+                    business_name: $('#business_name').val(),
+                    business_type: $('#business_type').val(),
+                    bank_name: $('#bank_name').val(),
+                    bank_account_number: $('#bank_account_number').val(),
+                    ifsc_code: $('#ifsc_code').val(),
+                    brand_name: $('#brand_name').val(),
+                    gst_number: $('#gst_number').val(),
+                    _token: '{{ csrf_token() }}'
+                };
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('#otp').val('');
+                        $('#otpModal').modal('hide');
+                        toast.success(response.message);
+                    },
+                    error: function(response) {
+                        $('#otp').val('');
+                        $('#otpModal').modal('hide');
+                        let errors = response.responseJSON.errors;
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                toastr.error(errors[key][0]);
+                            }
+                        }
+                    }
+                });
+            }
 
             $(document).ready(function() {
                 $.ajaxSetup({
@@ -317,95 +406,31 @@
                     }
                 });
 
-                var formData = {};
-
-                // Update Personal Information
-                $('.p_update_btn').click(function(e) {
-                    e.preventDefault();
-                    var url = '{{ route('updatePersonalInfo') }}';
-                    var formData = {
-                        id : $('#id').val(),
-                        contact_person_name: $('#contact_person_name').val(),
-                        contact_person_mobile: $('#contact_person_mobile').val(),
-                        contact_person_alternate_number: $('#contact_person_alternate_number').val(),
-                        contact_person_alternate_email: $('#contact_person_alternate_email').val(),
-                        _token: '{{ csrf_token() }}'
-                    };
-
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            $('#otpModal').modal('show');
-                        },
-                        error: function(response) {
-                            let errors = response.responseJSON.errors;
-                            for (let key in errors) {
-                                if (errors.hasOwnProperty(key)) {
-                                    toastr.error(errors[key][0]);
-                                }
-                            }
-                        }
-                    });
-                });
-
-                // Update Business Information
-                $('.b_update_btn').click(function(e) {
-                    e.preventDefault();
-                    var url = '{{ route('updateBusinessInfo') }}';
-                    var formData = {
-                        business_name: $('#business_name').val(),
-                        business_type: $('#business_type').val(),
-                        bank_name: $('#bank_name').val(),
-                        bank_account_number: $('#bank_account_number').val(),
-                        ifsc_code: $('#ifsc_code').val(),
-                        brand_name: $('#brand_name').val(),
-                        gst_number: $('#gst_number').val(),
-                        _token: '{{ csrf_token() }}'
-                    };
-
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            $('#otpModal').modal('show');
-                        },
-                        error: function(response) {
-                            let errors = response.responseJSON.errors;
-                            for (let key in errors) {
-                                if (errors.hasOwnProperty(key)) {
-                                    toastr.error(errors[key][0]);
-                                }
-                            }
-                        }
-                    });
-                });
                 $('#otpForm').submit(function(e) {
                     e.preventDefault();
 
                     // Create a new FormData object
-                    var formData = new FormData();
-                    
+                    var formData = new FormData(this);
+
                     // Append the OTP value
                     var otp = $('#otp').val();
                     formData.append('otp', otp);
 
-                    // Append data from personal_contact_form
-                    var personalContactForm = $('#personal_contact_form')[0];
-                    var contactFormData = new FormData(personalContactForm);
-
-                    contactFormData.forEach((value, key) => {
-                        formData.append(key, value);
-                    });
                     $.ajax({
-                        url: '{{ route('verifyOtpAndUpdateSetting') }}',
+                        url: '{{ route('verifySettingOtp') }}',
                         type: 'POST',
                         data: formData,
+                        processData: false,  // Important for FormData
+                        contentType: false,  // Important for FormData
                         success: function(response) {
-                            toastr.success(response.message);
-                            $('#otpModal').modal('hide');
+                            // Call appropriate function to update the information by active tab
+                            if ($('#personal-info-tab').hasClass('active')) {
+                                updatePersonalInfo();
+                            } else if ($('#business-info-tab').hasClass('active')) {
+                                updateBusinessInfo();
+                            } else if ($('#kyc-info-tab').hasClass('active')) {
+                                updateKycInfo();
+                            }
                         },
                         error: function(response) {
                             toastr.error(response.responseJSON.message);
@@ -413,6 +438,7 @@
                     });
                 });
             });
+
         </script>
     @endpush
 </body>
