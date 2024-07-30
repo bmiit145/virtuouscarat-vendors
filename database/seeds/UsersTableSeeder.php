@@ -11,6 +11,10 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        if (\Illuminate\Support\Facades\DB::table('users')->count() > 0) {
+            return;
+        }
+
         $data=array(
             array(
                 'name'=>'CodeAstro',
@@ -20,8 +24,22 @@ class UsersTableSeeder extends Seeder
                 'status'=>'active'
             ),
             array(
-                'name'=>'Customer A',
-                'email'=>'customer@gmail.com',
+                'name'=>'vendor 1',
+                'email'=>'vendor1@vc.com',
+                'password'=>Hash::make('password'),
+                'role'=>'user',
+                'status'=>'active'
+            ),
+            array(
+                'name'=>'vendor 2',
+                'email'=>'vendor2@vc.com',
+                'password'=>Hash::make('password'),
+                'role'=>'user',
+                'status'=>'active'
+            ),
+            array(
+                'name'=>'vendor 3',
+                'email'=>'vendor3@vc.com',
                 'password'=>Hash::make('password'),
                 'role'=>'user',
                 'status'=>'active'

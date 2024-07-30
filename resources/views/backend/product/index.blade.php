@@ -11,6 +11,8 @@
      <div class="card-header py-3">
       <h6 class="m-0 font-weight-bold text-primary float-left">Product Lists</h6>
         <div class="float-right d-flex">
+
+            @if(Auth::user()->status != 'inactive')
             <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data" class="mr-1">
                 @csrf
                 <label for="importFile" class="btn btn-primary btn-sm mx-1 bg-success border-0" data-toggle="tooltip" data-placement="bottom" title="Import Products" style="height: 102%;">
@@ -18,7 +20,10 @@
                     <input id="importFile" type="file" name="import_file" accept=".csv,.xlsx" style="display: none;" onchange="this.form.submit()">
                 </label>
             </form>
+            @endif
+            @if(Auth::user()->status != 'inactive')
         <a href="{{route('product.create')}}" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>
+            @endif
             <form method="post" action="{{ route('product.clearAll') }}">
                 @csrf
                 <button type="submit" class="btn btn-primary bg-danger btn-sm mx-1 border-0" data-toggle="tooltip" data-placement="bottom" title="Delete All Products">

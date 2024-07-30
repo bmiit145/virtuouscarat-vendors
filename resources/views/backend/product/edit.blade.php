@@ -195,7 +195,7 @@
                 @endphp
 
                 <hr/>
-                <h5> Attributes </h3>
+                <h5> Attributes </h5>
                     <div class="row">
                         @foreach ($attributes as $key => $attribute)
                             <div class="col-md-4">
