@@ -126,14 +126,41 @@ class AdminController extends Controller
         return view('backend.thankyou');
     }
 
-    public function updateSetting(Request $request)
+    public function updatePersonalInfo(Request $request)
     {
-        // Validate the request data
+        // dd($request->all());
         $validatedData = $request->validate([
             'contact_person_name' => 'required|string|max:255',
             'contact_person_mobile' => 'required|string|max:15',
             'contact_person_alternate_number' => 'nullable|string|max:15',
             'contact_person_alternate_email' => 'nullable|email|max:255',
+        ]);
+
+        $id = Auth::user()->id;
+        $otp = rand(100000, 999999);
+
+        $user = User::find($id);
+        $user->update([
+            'name' => $request->contact_person_name,
+            'phone' => $request->contact_person_mobile,
+            'alternate_number' => $request->contact_person_alternate_number,
+            'alternate_email' => $request->contact_person_alternate_email,
+        ]);
+
+        $email = $user->email;
+        Mail::to($email)->send(new SendOtpMail($otp));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'OTP sent to email. Please verify to update settings.'
+        ]);
+    }
+
+    
+    public function updateBusinessInfo(Request $request)
+    {
+        dd($request->all());
+        $validatedData = $request->validate([
             'business_name' => 'required|string|max:255',
             'business_type' => 'required|string|max:255',
             'bank_name' => 'required|string|max:255',
@@ -143,19 +170,12 @@ class AdminController extends Controller
             'gst_number' => 'required|string|max:15',
         ]);
     
-        // Fetch the authenticated user's ID
         $id = Auth::user()->id;
-        
-        // Generate a 6-digit OTP
         $otp = rand(100000, 999999);
     
-        
-         $user = User::where('id', $id)->first();
-         $email = $user->email;
-        // Fetch or create business details for the user
-        $business_data = Userdetails::where('user_id', $id)->first();
-        if ($business_data) {
-            $business_data->update([
+        $business_data = Userdetails::updateOrCreate(
+            ['user_id' => $id],
+            [
                 'business_name' => $request->business_name,
                 'business_type' => $request->business_type,
                 'bank_name' => $request->bank_name,
@@ -164,25 +184,12 @@ class AdminController extends Controller
                 'brand_name' => $request->brand_name,
                 'gst' => $request->gst_number,
                 'otp' => $otp,
-            ]);
-        } else {
-            $business_data = Userdetails::create([
-                'business_name' => $request->business_name,
-                'business_type' => $request->business_type,
-                'bank_name' => $request->bank_name,
-                'account_number' => $request->bank_account_number,
-                'ifsc_code' => $request->ifsc_code,
-                'brand_name' => $request->brand_name,
-                'user_id' => $id,
-                'gst' => $request->gst_number,
-                'otp' => $otp,
-            ]);
-        }
+            ]
+        );
     
-        // Send OTP via email
+        $email = Auth::user()->email;
         Mail::to($email)->send(new SendOtpMail($otp));
     
-        // Return a JSON response indicating OTP has been sent
         return response()->json([
             'success' => true,
             'message' => 'OTP sent to email. Please verify to update settings.'
@@ -191,6 +198,7 @@ class AdminController extends Controller
     
     public function verifyOtpAndUpdateSetting(Request $request)
     {
+        dd($request->all());
         // Validate the OTP
         $validatedData = $request->validate([
             'otp' => 'required|integer',
@@ -209,34 +217,34 @@ class AdminController extends Controller
                 'message' => 'Invalid OTP. Please try again.'
             ], 400);
         }
-    
         // Update user details
-        $user = User::find($id);
-        $user->phone = $request->contact_person_mobile;
-        $user->name = $request->contact_person_name;
-        $user->alternate_mail = $request->contact_person_alternate_email;
-        $user->alternate_number = $request->contact_person_alternate_number;
+        $user = User::where('id', $id)->first();
+        // dd($user);
+        $user->phone = $request->phone;
+        $user->name = $request->name;
+        $user->alternate_mail = $request->alternate_mail;
+        $user->alternate_number = $request->alternate_number;
         $user->gst_number = $request->gst_number;
-        $user->save();
+        $user->update();
     
-        // Update business details
-        $business_data->update([
-            'business_name' => $request->business_name,
-            'business_type' => $request->business_type,
-            'bank_name' => $request->bank_name,
-            'account_number' => $request->bank_account_number,
-            'ifsc_code' => $request->ifsc_code,
-            'brand_name' => $request->brand_name,
-            'gst' => $request->gst_number,
-            'otp' => null // Clear the OTP after verification
-        ]);
+        // // Update business details
+        // $business_data->update([
+        //     'business_name' => $request->business_name,
+        //     'business_type' => $request->business_type,
+        //     'bank_name' => $request->bank_name,
+        //     'account_number' => $request->bank_account_number,
+        //     'ifsc_code' => $request->ifsc_code,
+        //     'brand_name' => $request->brand_name,
+        //     'gst' => $request->gst_number,
+        //     'otp' => null // Clear the OTP after verification
+        // ]);
     
         // Return a JSON response with success message and updated data
         return response()->json([
             'success' => true,
             'message' => 'Settings updated successfully.',
             'user' => $user,
-            'business_details' => $business_data
+            // 'business_details' => $business_data
         ]);
     }
     

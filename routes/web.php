@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,7 +109,11 @@ Route::get('payment/success', 'PayPalController@success')->name('payment.success
 Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     Route::get('/','AdminController@index')->name('admin');
 
-    Route::post('/updateSetting','AdminController@updateSetting')->name('updateSetting');
+// Route::post('/updateSetting','AdminController@updateSetting')->name('updateSetting');
+Route::post('/update-personal-info', [AdminController::class, 'updatePersonalInfo'])->name('updatePersonalInfo');
+Route::post('/update-business-info', [AdminController::class, 'updateBusinessInfo'])->name('updateBusinessInfo');
+
+
 //    Route::get('/','AdminController@index')->name('user');
     Route::get('/file-manager',function(){
         return view('backend.layouts.file-manager');
