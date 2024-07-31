@@ -207,7 +207,7 @@
           'Growth Type' => 'CVD',
           'Polish' => 'Excellent',
           'Symmetry' => 'Excellent',
-          'Measurements' => '4.68-4.71 x 2.94 mm',
+          'Measurement' => '4.68-4.71 x 2.94 mm',
           'Table' => '56.5%',
           'Depth' => '62.5%',
           'Ratio' => '1.01',
