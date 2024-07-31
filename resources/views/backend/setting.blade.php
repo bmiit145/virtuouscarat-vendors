@@ -346,9 +346,9 @@
                     type: 'POST',
                     data: formData,
                     success: function(response) {
-                        toast.success(response.message);
                         $('#otp').val('');
                         $('#otpModal').modal('hide');
+                        toastr.success(response.message);
                     },
                     error: function(response) {
                         $('#otp').val('');
@@ -384,7 +384,7 @@
                     success: function(response) {
                         $('#otp').val('');
                         $('#otpModal').modal('hide');
-                        toast.success(response.message);
+                        toastr.success(response.message);
                     },
                     error: function(response) {
                         $('#otp').val('');
