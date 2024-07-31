@@ -41,7 +41,7 @@ class LoginController extends Controller
      */
 
     public function credentials(Request $request){
-        return ['email'=>$request->email,'password'=>$request->password,'status'=>'active','role'=>'user'];
+        return ['email'=>$request->email,'password'=>$request->password,'role'=>'user'];
     }
 
     public function __construct()
@@ -105,7 +105,7 @@ class LoginController extends Controller
             'website' => 'nullable|string|max:255',
             // 'gst_number' => ['required|unique:users', 'string', 'regex:/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/'],
         ]);
-    
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -124,7 +124,7 @@ class LoginController extends Controller
         $user->gst_number = $request->gst_number;
         $user->status = 'inactive';
         $user->save();
-        
+
 
         return redirect('/thankyou');
     }

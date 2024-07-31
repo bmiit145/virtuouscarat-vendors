@@ -63,6 +63,12 @@
               }else{
               $stock_status = "On Backorder";
               }
+
+              $productAttributes = $product->attributes->pluck('value','name');
+              $ProdColor = $productAttributes->get('Color', '');
+              $prodClarity = $productAttributes->get('Clarity', '');
+              $prodCut = $productAttributes->get('Cut', '');
+              $prodMeasurement = $productAttributes->get('Measurement', '');
             @endphp
                 <tr>
                   <td>{{$product->sku}}
@@ -70,7 +76,7 @@
                   </td>
                     <td>
                         {{$product->name}}
-                        <sub>( {{ $product }} )</sub>
+                        <sub>( {{$ProdColor . ' ' . $prodClarity . ' ' . $prodCut . ' ' . $prodMeasurement}} )</sub>
                     </td>
                     <td>${{$product->RAP}}</td>
                     <td>${{$product->price}}</td>

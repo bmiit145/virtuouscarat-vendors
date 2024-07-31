@@ -101,7 +101,7 @@ class ProductController extends Controller
         'SHAPE' => ['shape', 'SHAPE' , 'Shape'],
         'Carat Weight' => ['CTS', 'CARAT' , 'CARAT WEIGHT' , 'Weight' , 'WEIGHT' , 'WEIGHT (CTS)'],
         'Cut' => ['cut', 'CUT' , 'Cut Grade'],
-        'Color' => ['color', 'COLOR' , 'Color'],
+        'Color' => ['color', 'COLOR' , 'Color' , 'COL'],
         'Fancy Color' => ['Fancy Color'],
         'Fancy Color Intensity' => ['Fancy Color Intensity'],
         'Fancy Color Overtone' => ['Fancy Color Overtone'],
@@ -142,6 +142,7 @@ class ProductController extends Controller
     {
 
         $products=WpProduct::where('vendor_id',Auth::id())->orderBy('created_at', 'desc')->orderBy('wp_product_id','desc')->get();
+
         // return $products;
         return view('backend.product.index')->with('products',$products);
     }
