@@ -39,14 +39,14 @@
         <table class="table table-bordered table-hover" id="product-dataTable" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>REF No.</th>
+              <th>Certificate Number</th>
               <th>Product Name</th>
               {{-- <th>Category</th> --}}
                 <th>RAP</th>
                 <th>Total Price</th>
-                <th>Discount ( % )</th>
-                <th>Discount Price</th>
-                <th>List Price</th>
+                <th>Dis%</th>
+                <th>DisPrice</th>
+{{--                <th>List Price</th>--}}
 {{--              <th>Stock Quantity</th>--}}
               <th>Status</th>
               <th>Action</th>
@@ -63,17 +63,26 @@
               }else{
               $stock_status = "On Backorder";
               }
+
+              $productAttributes = $product->attributes->pluck('value','name');
+              $ProdColor = $productAttributes->get('Color', '');
+              $prodClarity = $productAttributes->get('Clarity', '');
+              $prodCut = $productAttributes->get('Cut', '');
+              $prodMeasurement = $productAttributes->get('Measurement', '');
             @endphp
                 <tr>
                   <td>{{$product->sku}}
 {{--                      <sub>{{$product->Category->title}}</sub>--}}
                   </td>
-                    <td>{{$product->name}}</td>
+                    <td>
+                        {{$product->name}}
+                        <sub>( {{$ProdColor . ' ' . $prodClarity . ' ' . $prodCut . ' ' . $prodMeasurement}} )</sub>
+                    </td>
                     <td>${{$product->RAP}}</td>
                     <td>${{$product->price}}</td>
                     <td>${{$product->discount}}%</td>
                     <td>${{$product->discounted_price}}</td>
-                    <td>${{$product->sale_price}}
+{{--                    <td>${{$product->sale_price}}--}}
 {{--                        <sub>${{$product->regular_price}}</sub>--}}
                     </td>
 {{--                    <td>  {{$product->quantity }}</td>--}}

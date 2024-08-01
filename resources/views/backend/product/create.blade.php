@@ -15,7 +15,10 @@
         }
 </style>
 <div class="card">
-    <h5 class="card-header">Add Product</h5>
+    <h5 class="card-header align-items-center">
+        <span> Add Product </span>
+        <a href="{{route('product.index')}}" class="btn btn-sm btn-primary shadow-sm float-right">Back</a>
+    </h5>
     <div class="card-body">
       <form method="post" action="{{route('product.store')}}" id="productForm" enctype="multipart/form-data">
         {{csrf_field()}}
@@ -29,13 +32,13 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label for="inputTitle" class="col-form-label">Product Name <span class="text-danger">*</span></label>
-          <input id="inputTitle" type="text" name="prod_name" placeholder="Enter Product Name"  value="{{old('prod_name')}}" class="form-control">
-          @error('prod_name')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
+    {{--        <div class="form-group">--}}
+    {{--          <label for="inputTitle" class="col-form-label">Product Name <span class="text-danger">*</span></label>--}}
+    {{--          <input id="inputTitle" type="text" name="prod_name" placeholder="Enter Product Name"  value="{{old('prod_name')}}" class="form-control">--}}
+    {{--          @error('prod_name')--}}
+    {{--          <span class="text-danger">{{$message}}</span>--}}
+    {{--          @enderror--}}
+    {{--        </div>--}}
 
 
         <div class="form-group">
@@ -121,15 +124,15 @@
               <label for="discounted_price" class="col-form-label font-weight-bold text-primary">
                   Discounted Price: <span id="discountedPriceLabel">$0</span>
               </label><br/>
-              <label for="listed_price" class="col-form-label font-weight-bold text-primary">
-                  Listed Price: <span id="listedPriceLabel">$0</span>
-              </label>
+{{--              <label for="listed_price" class="col-form-label font-weight-bold text-primary">--}}
+{{--                  Listed Price: <span id="listedPriceLabel">$0</span>--}}
+{{--              </label>--}}
           </div>
 
       {{-- SKU --}}
 
         <div class="form-group">
-          <label for="sku" class="col-form-label">SKU <span class="text-danger">*</span></label>
+          <label for="sku" class="col-form-label">Certificate No. <span class="text-danger">*</span></label>
           <input id="sku" type="text" name="sku" placeholder="SKU"  value="{{old('sku')}}" class="form-control">
           @error('sku')
           <span class="text-danger">{{$message}}</span>
@@ -190,21 +193,35 @@
       @php
       $attributes = [
           'Type' => 'Lab Grown Diamond',
+          'LAB' => 'IGI',
           'Shape' => 'Round Brilliant',
           'Carat Weight' => '0.38 ct',
           'Cut' => 'Ideal',
           'Color' => 'E',
+          'Fancy Color' => 'YELLOW',
+          'Fancy Color Intensity' => 'Fancy Intense',
+          'Fancy Color Overtone' => 'GREENISH',
           'Clarity' => 'VS1',
           'Fluorescence' => 'None',
-          'Growth Method' => 'CVD',
+//          'Growth Method' => 'CVD',
+          'Growth Type' => 'CVD',
           'Polish' => 'Excellent',
           'Symmetry' => 'Excellent',
+          'Measurement' => '4.68-4.71 x 2.94 mm',
           'Table' => '56.5%',
           'Depth' => '62.5%',
-          'Ratio' => '1.01'
+          'Ratio' => '1.01',
+          'BGM' => 'NO',
+          'Laser Inscription' => 'YES',
+          'Member Comments' => '',
+          'Pair' => '',
+          'H&A' => '',
+          'Eye Clean' => 'YES',
+          'LOCATION' => 'MUMBAI',
+          'MILKY' => 'NO',
+          'LUSTER' => 'Ex.'
       ];
       @endphp
-
   <hr/>
   <h5> Attributes </h5>
     <div class="row">
