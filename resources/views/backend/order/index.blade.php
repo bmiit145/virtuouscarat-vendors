@@ -42,9 +42,6 @@
                 <th>Customer Name</th>
                 <th>
                     <span class="fixed-text">Product Name</span><br>
-                    Carat<br>
-                    <span class="fixed-text">Category (color, clarity, cut + Measurement)</span><br>
-                    <br>
                 </th>
                 <th>QTY</th>
 {{--                <th>Vendor Name</th>--}}
@@ -69,6 +66,15 @@
         @endphp
 
         @foreach($filteredProducts as $index => $product)
+                    @if($product->product)
+                        @php
+                            $productAttributes = $product->product->attributes->pluck('value','name');
+                            $ProdColor = $productAttributes->get('Color', '');
+                            $prodClarity = $productAttributes->get('Clarity', '');
+                            $prodCut = $productAttributes->get('Cut', '');
+                            $prodMeasurement = $productAttributes->get('Measurement', '');
+                        @endphp
+                    @endif
             <tr data-order_id="{{ $order->order_id }}">
                 @if($index == 0)
                     <td rowspan="{{ $rowspan }}">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
@@ -77,13 +83,7 @@
                 @endif
                 <td>
                     <span>{{ $product->product->name ?? '' }}
-                        <sub>{{ $product->product->sku ?? '' }}</sub><br>
-                        <span class="fixed-text">₹{{ $product->carat }} </span><br>
-                                    <span class="fixed-text">₹{{ $product->category }} </span>
-                                        <sub>({{ $product->color }})</sub>
-                                        <sub>({{ $product->clarity }})</sub>
-                                        <sub>({{ $product->cut }})</sub>
-                                        <sub>({{ $product->measurement }})</sub>
+                    <sub>( {{$ProdColor . ' ' . $prodClarity . ' ' . $prodCut . ' ' . $prodMeasurement}} )</sub>
                     </span><br/>
                 </td>
                 <td>
