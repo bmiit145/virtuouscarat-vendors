@@ -14,6 +14,10 @@
     .table tbody tr.highlight-hover {
         background-color: #f1f1f1; 
     }
+
+    .fixed-text {
+        white-space: nowrap;
+    }
 </style>
  <!-- DataTales Example -->
  <div class="card shadow mb-4">
@@ -34,9 +38,14 @@
           <thead>
             <tr>
                 <th>Order Date</th>
-              <th>Order No.</th>
-              <th>Customer Name</th>
-                <th>Product Name</th>
+                <th>Order No.</th>
+                <th>Customer Name</th>
+                <th>
+                    <span class="fixed-text">Product Name</span><br>
+                    Carat<br>
+                    <span class="fixed-text">Category (color, clarity, cut + Measurement)</span><br>
+                    <br>
+                </th>
                 <th>QTY</th>
 {{--                <th>Vendor Name</th>--}}
 {{--              <th>Email</th>--}}
@@ -68,7 +77,13 @@
                 @endif
                 <td>
                     <span>{{ $product->product->name ?? '' }}
-                        <sub>{{ $product->product->sku ?? '' }}</sub>
+                        <sub>{{ $product->product->sku ?? '' }}</sub><br>
+                        <span class="fixed-text">₹{{ $product->carat }} </span><br>
+                                    <span class="fixed-text">₹{{ $product->category }} </span>
+                                        <sub>({{ $product->color }})</sub>
+                                        <sub>({{ $product->clarity }})</sub>
+                                        <sub>({{ $product->cut }})</sub>
+                                        <sub>({{ $product->measurement }})</sub>
                     </span><br/>
                 </td>
                 <td>
