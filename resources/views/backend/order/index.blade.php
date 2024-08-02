@@ -4,15 +4,15 @@
 <style>
 
     .table tbody tr {
-        transition: background-color 0.3s ease; 
+        transition: background-color 0.3s ease;
     }
 
     .table tbody tr:hover {
-        background-color: #f1f1f1; 
+        background-color: #f1f1f1;
     }
 
     .table tbody tr.highlight-hover {
-        background-color: #f1f1f1; 
+        background-color: #f1f1f1;
     }
 
     .fixed-text {
@@ -29,7 +29,7 @@
      <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
         <a href="#" class="btn btn-primary btn-sm mx-1 refresh_btn" >   <i class="fas fa-sync"></i></a>
-  
+
       </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -43,7 +43,7 @@
                 <th>
                     <span class="fixed-text">Product Name</span><br>
                 </th>
-                <th>QTY</th>
+{{--                <th>QTY</th>--}}
 {{--                <th>Vendor Name</th>--}}
 {{--              <th>Email</th>--}}
 {{--              <th>Charge</th>--}}
@@ -87,9 +87,9 @@
                     <span>( Color : {{$ProdColor . ', Clarity : ' . $prodClarity . ', Cut : ' . $prodCut . ', Measurement : ' . $prodMeasurement}} )</span> </td>
                     </span><br/>
                 </td>
-                <td>
-                    <span>{{ $product->quantity }}</span><br/>
-                </td>
+{{--                <td>--}}
+{{--                    <span>{{ $product->quantity }}</span><br/>--}}
+{{--                </td>--}}
                     <td>
                         @if($product->product)
                             <span>₹{{ $product->total }}<sub>₹{{ $product->price }}</sub></span>
