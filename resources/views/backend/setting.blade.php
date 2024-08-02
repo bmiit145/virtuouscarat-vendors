@@ -28,9 +28,6 @@
                 <li class="nav-item">
                     <a class="nav-link" id="business-info-tab" data-toggle="tab" href="#business-info" role="tab" aria-controls="business-info" aria-selected="false">Business Information</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="kyc-info-tab" data-toggle="tab" href="#kyc-info" role="tab" aria-controls="kyc-info" aria-selected="false">KYC Information</a>
-                </li>
             </ul>
 
 
@@ -43,6 +40,15 @@
                         <div class="card-body">
                             <form id="personal_conatct_form">
                                 <div class="row">
+                                    <div class="form-group col-6">
+                                        <label for="company_name" class="col-form-label"><b>Company Name</b><span
+                                                class="text-danger"></span></label>
+                                        <input type="text" class="form-control" id="company_name"
+                                            value="{{ $data->name ?? '' }}" name="company_name" required>
+                                        @error('company_name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                     <div class="form-group col-6">
                                         <label for="contact_person_name" class="col-form-label"><b>Contact Person Name</b><span
                                                 class="text-danger"></span></label>
@@ -128,6 +134,51 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
+                                    <label for="communication_address" class="col-form-label"><b>Communication Address</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->communication_address ?? '' }}" class="form-control"
+                                        id="communication_address" name="communication_address" required>
+                                    @error('communication_address')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="city" class="col-form-label"><b>City</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->city ?? '' }}" class="form-control"
+                                        id="city" name="city" required>
+                                    @error('city')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="state" class="col-form-label"><b>State</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->state ?? '' }}" class="form-control"
+                                        id="state" name="state" required>
+                                    @error('state')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="pincode" class="col-form-label"><b>Pincode</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->pincode ?? '' }}" class="form-control"
+                                        id="pincode" name="pincode" required>
+                                    @error('pincode')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="website" class="col-form-label"><b>Website</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->website ?? '' }}" class="form-control"
+                                        id="website" name="website" required>
+                                    @error('website')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
                                     <label for="bank_name" class="col-form-label"><b>Bank Name</b><span
                                             class="text-danger"></span></label>
                                     <input type="text" value="{{ $user->bank_name ?? '' }}" class="form-control"
@@ -181,60 +232,6 @@
                     </div>
                 </div>
 
-
-                <!-- KYC Information Tab -->
-                <div class="tab-pane fade" id="kyc-info" role="tabpanel" aria-labelledby="kyc-info-tab">
-                    <div class="card mt-4">
-                        <h5 class="card-header">KYC Information</h5>
-                        <div class="card-body">
-                            <div class="row">
-                                <!-- KYC Information Fields -->
-                                <div class="form-group col-6">
-                                    <label for="aadhaar_number" class="col-form-label"><b>Aadhaar Number</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" class="form-control" id="aadhaar_number"
-                                        value="{{ $user->aadhaar_number ?? '' }}" name="aadhaar_number" required>
-                                    @error('aadhaar_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="pan_number" class="col-form-label"><b>PAN Number</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" class="form-control" id="pan_number"
-                                        value="{{ $user->pan_number ?? '' }}" name="pan_number" required>
-                                    @error('pan_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="passport_number" class="col-form-label"><b>Passport Number</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" class="form-control" id="passport_number"
-                                        value="{{ $user->passport_number ?? '' }}" name="passport_number" required>
-                                    @error('passport_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="voter_id" class="col-form-label"><b>Voter ID</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" class="form-control" id="voter_id"
-                                        value="{{ $user->voter_id ?? '' }}" name="voter_id" required>
-                                    @error('voter_id')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-12 mb-3 d-flex justify-content-center">
-                                    <button class="btn btn-info k_update_btn" type="submit">Update KYC
-                                        Information</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
             </div>
 
             <!-- OTP Modal -->
@@ -272,7 +269,6 @@
 
     @push('scripts')
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script src="{{ asset('backend/summernote/summernote.min.js') }}"></script>
