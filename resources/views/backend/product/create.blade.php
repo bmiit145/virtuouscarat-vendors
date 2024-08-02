@@ -193,33 +193,33 @@
       @php
       $attributes = [
           'Type' => 'Lab Grown Diamond',
-          'LAB' => 'IGI',
-          'Shape' => 'Round Brilliant',
-          'Carat Weight' => '0.38 ct',
-          'Cut' => 'Ideal',
-          'Color' => 'E',
-          'Fancy Color' => 'YELLOW',
-          'Fancy Color Intensity' => 'Fancy Intense',
-          'Fancy Color Overtone' => 'GREENISH',
-          'Clarity' => 'VS1',
-          'Fluorescence' => 'None',
-//          'Growth Method' => 'CVD',
-          'Growth Type' => 'CVD',
-          'Polish' => 'Excellent',
-          'Symmetry' => 'Excellent',
-          'Measurement' => '4.68-4.71 x 2.94 mm',
-          'Table' => '56.5%',
-          'Depth' => '62.5%',
-          'Ratio' => '1.01',
-          'BGM' => 'NO',
-          'Laser Inscription' => 'YES',
+          'LAB' => '',
+          'Shape' => '',
+          'Carat Weight' => '',
+          'Cut' => '',
+          'Color' => '',
+          'Fancy Color' => '',
+          'Fancy Color Intensity' => '',
+          'Fancy Color Overtone' => '',
+          'Clarity' => '',
+          'Fluorescence' => '',
+//          'Growth Method' => '',
+          'Growth Type' => '',
+          'Polish' => '',
+          'Symmetry' => '',
+          'Measurement' => '',
+          'Table' => '',
+          'Depth' => '',
+          'Ratio' => '',
+          //'BGM' => '',
+          'Laser Inscription' => '',
           'Member Comments' => '',
-          'Pair' => '',
+          //'Pair' => '',
           'H&A' => '',
-          'Eye Clean' => 'YES',
-          'LOCATION' => 'MUMBAI',
-          'MILKY' => 'NO',
-          'LUSTER' => 'Ex.'
+          'Eye Clean' => '',
+          'LOCATION' => '',
+          'MILKY' => '',
+          'LUSTER' => ''
       ];
       @endphp
   <hr/>
@@ -230,7 +230,7 @@
               <div class="form-group">
                   <label for="{{ str_replace(' ', '_', strtolower($attribute)) }}">{{ $attribute }}</label>
                   <input type="text" class="form-control" name="attributes[{{ $attribute }}]" id="{{ str_replace(' ', '_', strtolower($attribute)) }}" value="{{ old('attributes.' . $attribute, $value) }}"
-                         @if ($attribute === 'Type') disabled @endif>
+                         @if ($attribute === 'Type' || $attribute == 'Carat Weight') readonly @endif>
               </div>
           </div>
 

@@ -121,17 +121,26 @@
                         @endphp
                         @if($product->is_fulfilled != 5)
                             @if($is_actionable)
-                        <form action="{{route('order.update.product.status') }}" class="order-product-action-btn-form" method="POST" style="display: flex; align-items: center;">
-                            @csrf
-                            <input type="hidden" name="order_id" value="{{ $order->order_id }}">
-                            <input type="hidden" name="product_id" value="{{ $product->product_id }}">
-                            <select name="order-action-select" class="form-control" style="margin-right: 10px;" onchange="enableSubmitButton(this)" onfocus="enableSubmitButton(this)">
-                                             <option value="0" {{ $product->is_fulfilled == 1 ? 'selected' : '' }}> -- Select status --</option>
-                                            <option value="1" {{ $product->is_fulfilled == 1 ? 'selected' : '' }}>Approved</option>
-                                        <option value="2" {{ $product->is_fulfilled == 2 ? 'selected' : '' }}>Rejected</option>
-                                    </select>
-                            <button id="submit-button-{{ $order->order_id }}" style="background: #132644; color: white; border-radius: 6px;" type="submit" disabled>Submit</button>
-                        </form>
+                            <form action="{{route('order.update.product.status') }}" class="order-product-action-btn-form" method="POST" style="display: flex; align-items: center; width: 200px;">
+                                @csrf
+                                <input type="hidden" name="order_id" value="{{ $order->order_id }}">
+                                <input type="hidden" name="product_id" value="{{ $product->product_id }}">
+                                <select name="order-action-select" class="form-control" style="margin-right: 10px; width: 200px;" onchange="enableSubmitButton(this)" onfocus="enableSubmitButton(this)">
+                                    <option value="0" {{ $product->is_fulfilled == 0 ? 'selected' : '' }}>-- Select status --</option>
+                                    <option value="1" {{ $product->is_fulfilled == 1 ? 'selected' : '' }}>Approved</option>
+                                    <option value="2" {{ $product->is_fulfilled == 2 ? 'selected' : '' }}>Rejected</option>
+                                </select>
+                                <button id="submit-button-{{ $order->order_id }}" style="background: #132644; color: white; border-radius: 6px;" type="submit" disabled>Submit</button>
+                            </form>
+
+                            <script>
+                            function enableSubmitButton(selectElement) {
+                                const form = selectElement.closest('form');
+                                const submitButton = form.querySelector('button[type="submit"]');
+                                submitButton.disabled = selectElement.value === '0';
+                            }
+                            </script>
+
                             @endif
                         @endif
                     </td>

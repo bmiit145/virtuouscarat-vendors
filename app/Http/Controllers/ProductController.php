@@ -37,7 +37,7 @@ class ProductController extends Controller
             ],
             'short_description' => [
                 'header' => ['SHORT DESCRIPTION'],
-                'default' => 'No short description available.'
+                'default' => null
             ],
             'sku' => [
                 'header' => ['sku' , 'SKU' , 'REPORTNO' , 'REPORT #' ,  'Certificate #'],
@@ -105,12 +105,12 @@ class ProductController extends Controller
         'Fancy Color' => ['Fancy Color'],
         'Fancy Color Intensity' => ['Fancy Color Intensity'],
         'Fancy Color Overtone' => ['Fancy Color Overtone'],
-        'Clarity' => ['clarity', 'CLARITY' , 'Clarity'],
+        'Clarity' => ['clarity', 'CLARITY' , 'Clarity' , 'CLARITY '],
         'Fluorescence Intensity' => ['fl', 'FL' , 'Fluorescence Intensity' , 'floInt'],
         'Growth Type' => ['Growth Type'],
-        'POLISH' => ['polish', 'POLISH' , 'Polish'],
-        'Symmetry' => ['sym', 'SYM' , 'Symmetry'],
-        'Measurement' => ['measurement', 'MEASUREMENT' , 'Measurements'],
+        'POLISH' => ['polish', 'POLISH' , 'Polish' , 'POL'],
+        'Symmetry' => ['sym', 'SYM' , 'Symmetry' , 'SYMMETRY'],
+        'Measurement' => ['measurement', 'MEASUREMENT' , 'Measurements' , 'MEASUREMENT '],
         'TBL' => ['tbl', 'TBL' , 'Table Percent' , 'Table %' , 'TABLE %'],
         'T.DEPTH' => ['t_depth', 'T.DEPTH' ,'Depth Percent' , 'Depth %'],
         'Ratio' => ['Ratio'],
@@ -515,13 +515,40 @@ class ProductController extends Controller
 
             //category_id
             $category = Category::where('title', $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized')->first();
-            $productData['category_id'] = $category->id ?? 15;
+            $defaultCategory = Category::where('title' , 'Uncategorized')->first() ?? Category::first(); 
+            $productData['category_id'] = $category->id ?? $defaultCategory->id;
             $mainPhoto = $category ? Category::getProductImageLink($category) : $this->defaultImage;
             $productData['main_photo'] = $mainPhoto;
 
             if (empty($productData['name'])) {
 //                $productData['name'] = $productData['CTS'] . ' ct ' . $productData['category'] . ' Shaped Loose Lab Grown Diamond';
                 $productData['name'] = $productData['CTS'] . ' ct ' . $productData['category'] ;
+            }
+
+            if (empty($productData['short_description'])) {
+
+                // dd($data , $mappedAttributes);
+                if(isset($data[$mappedAttributes['TYPE']])){
+
+                    // Build the short description
+                    $descriptionParts = [
+                        $data[$mappedAttributes['TYPE']] ?? '',
+                        'Loose Lab Grown Diamond',
+                        $data[$mappedAttributes['Cut']] ?? '',
+                        $data[$mappedAttributes['Clarity']] ?? '',
+                        $data[$mappedAttributes['Color']] ?? '',
+                        $data[$mappedAttributes['POLISH']] ?? '',
+                        $data[$mappedAttributes['Symmetry']] ?? '',
+                        $data[$mappedAttributes['Fluorescence Intensity']] ?? '',
+                        $data[$mappedAttributes['Measurement']] ?? ''
+                    ];
+
+                    // Remove any empty parts and join them with a space
+                    $productData['short_description'] = implode(' ', array_filter($descriptionParts, fn($value) => !empty($value)));
+
+                }else{
+                    $productData['short_description'] = 'No Short Description available';
+                }
             }
 
             // Create the product
