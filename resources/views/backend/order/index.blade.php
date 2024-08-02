@@ -82,8 +82,9 @@
                     <td rowspan="{{ $rowspan }}">{{ $order->billing_first_name }} {{ $order->billing_last_name }}</td>
                 @endif
                 <td>
+                    <span>{{ $product->product->sku ?? '' }} <br>
                     <span>{{ $product->product->name ?? '' }}
-                    <sub>( {{$ProdColor . ' ' . $prodClarity . ' ' . $prodCut . ' ' . $prodMeasurement}} )</sub>
+                    <span>( Color : {{$ProdColor . ', Clarity : ' . $prodClarity . ', Cut : ' . $prodCut . ', Measurement : ' . $prodMeasurement}} )</span> </td>
                     </span><br/>
                 </td>
                 <td>
