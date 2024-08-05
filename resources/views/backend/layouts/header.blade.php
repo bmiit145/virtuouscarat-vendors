@@ -58,13 +58,13 @@
   <!-- Topbar Navbar -->
   <ul class="navbar-nav ml-auto">
 
-      <li class="nav-item dropdown no-arrow">
-          <form id="logout-form" action="{{ route('login.logout') }}" method="POST">
-              @csrf
-              <button type="submit" class="nav-link">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> {{ __('Logout') }}
-              </button>
-          </form>
+      <li class="nav-item dropdown no-arrow" style="background-color: transparent">
+{{--          <form id="logout-form" action="{{ route('login.logout') }}" method="POST">--}}
+{{--              @csrf--}}
+{{--              <button type="submit" class="nav-link">--}}
+{{--                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> {{ __('Logout') }}--}}
+{{--              </button>--}}
+{{--          </form>--}}
       </li>
 
     {{-- Home page --}}
