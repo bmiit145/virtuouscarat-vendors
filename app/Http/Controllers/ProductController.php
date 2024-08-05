@@ -140,9 +140,7 @@ class ProductController extends Controller
 
     public function index()
     {
-
         $products=WpProduct::where('vendor_id',Auth::id())->orderBy('created_at', 'desc')->orderBy('wp_product_id','desc')->get();
-
         // return $products;
         return view('backend.product.index')->with('products',$products);
     }

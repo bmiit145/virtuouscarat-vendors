@@ -75,8 +75,8 @@
 {{--                      <sub>{{$product->Category->title}}</sub>--}}
                   </td>
                     <td>
-                        {{$product->name}}
-                        <sub>( {{$ProdColor . ' ' . $prodClarity . ' ' . $prodCut . ' ' . $prodMeasurement}} )</sub>
+                        {{$product->name}} <br>
+                        <span>( Color : {{$ProdColor . ', Clarity : ' . $prodClarity . ', Cut : ' . $prodCut . ', Measurement : ' . $prodMeasurement}} )</span> </td>
                     </td>
                     <td>${{$product->RAP}}</td>
                     <td>${{$product->price}}</td>
@@ -86,14 +86,16 @@
 {{--                        <sub>${{$product->regular_price}}</sub>--}}
                     </td>
 {{--                    <td>  {{$product->quantity }}</td>--}}
+
                     <td>  @if($product->is_approvel == 0)
-                              <button class="btn btn-sm btn-warning" style="cursor: unset;">Pending</button>
+                              <button class="badge bg-warning-light rounded-pill" style="cursor: unset;">Pending</button>
                           @elseif($product->is_approvel == 1)
-                          <button class="btn btn-sm btn-success" style="cursor: unset;">Approved</button>
+                          <button class="badge bg-success-light rounded-pill" style="cursor: unset;">Approved</button>
                          @else
-                             <button class="btn btn-sm btn-danger" style="cursor: unset;">Rejected</button>
+                             <button class="badge bg-danger-light rounded-pill" style="cursor: unset;">Rejected</button>
                          @endif
                     </td>
+                    
                     <td>
                      <div style="text-align: center">
                     <a  id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
@@ -126,6 +128,7 @@
 @push('styles')
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css">
   <style>
       div.dataTables_wrapper div.dataTables_paginate{
           /*display: none;*/
@@ -137,6 +140,15 @@
       .zoom:hover {
         transform: scale(5);
       }
+
+      .btn {
+        display: flex;
+        align-items: center;
+      }
+      
+      .btn i {
+        margin-right: 8px; /* Adjust spacing between icon and text */
+      }
   </style>
 @endpush
 
@@ -146,6 +158,7 @@
   <script src="{{asset('backend/vendor/datatables/jquery.dataTables.min.js')}}"></script>
   <script src="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.js"></script>
 
   <!-- Page level custom scripts -->
   <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
