@@ -125,7 +125,9 @@
 
 @push('styles')
   <link href="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
+  <!-- Include SweetAlert2 CSS from CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+
   <style>
       div.dataTables_wrapper div.dataTables_paginate{
           /*display: none;*/
@@ -145,10 +147,13 @@
   <!-- Page level plugins -->
   <script src="{{asset('backend/vendor/datatables/jquery.dataTables.min.js')}}"></script>
   <script src="{{asset('backend/vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+  <!-- Include SweetAlert2 JavaScript from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
   <!-- Page level custom scripts -->
-  <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>
+{{--  <script src="{{asset('backend/js/demo/datatables-demo.js')}}"></script>--}}
+
   <script>
 
 
@@ -179,18 +184,20 @@
               var dataID=$(this).data('id');
               // alert(dataID);
               e.preventDefault();
-              swal({
+              swal.fire({
                     title: "Are you sure?",
                     text: "Once deleted, you will not be able to recover this data!",
                     icon: "warning",
-                    buttons: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, keep it',
                     dangerMode: true,
                 })
                 .then((willDelete) => {
                     if (willDelete) {
                        form.submit();
                     } else {
-                        swal("Your data is safe!");
+                        swal.fire("Your data is safe!");
                     }
                 });
           })
@@ -202,4 +209,49 @@
         location.reload();
     });
 </script>
+
+  <script>
+      // duplicate SKUs model which will be shown when duplicate SKUs are found in the uploaded file as got by duplicateSkus session of laravel
+      @if(session('duplicateSkus'))
+      var duplicateSkus = @json(session('duplicateSkus'));
+
+      // Create table with multiple columns
+      var tableHtml = '<table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">';
+      tableHtml += '<tbody>';
+
+      // Define the number of columns
+      var numColumns = 4; // Adjust as needed
+      var rows = Math.ceil(duplicateSkus.length / numColumns);
+
+      for (var i = 0; i < rows; i++) {
+          tableHtml += '<tr>';
+          for (var j = 0; j < numColumns; j++) {
+              var index = i * numColumns + j;
+              var sku = duplicateSkus[index] || ''; // Handle if there are fewer SKUs than columns
+              tableHtml += '<td style="border: 1px solid #ddd; padding: 8px; text-align: left;">' + sku + '</td>';
+          }
+          tableHtml += '</tr>';
+      }
+
+      tableHtml += '</tbody></table>';
+
+      swal.fire({
+          title: "Duplicate SKUs Found",
+          // content: {
+          //     element: 'div',
+          //     attributes: {
+          //         innerHTML: tableHtml
+          //     }
+          // },
+          html: tableHtml,
+          icon: "warning",
+          dangerMode: true,
+          backdrop: true,
+          // closeOnClickOutside: false,
+          allowOutsideClick: false,
+          width: '80%',
+      });
+      @endif
+  </script>
+
 @endpush

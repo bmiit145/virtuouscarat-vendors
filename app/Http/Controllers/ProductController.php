@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\Session;
+
 
 use Illuminate\Support\Str;
 
@@ -488,7 +490,7 @@ class ProductController extends Controller
                 $duplicateSkus[] = $sku;
                 continue;
             }
-            
+
             $productData = [
                 'name' => $data[$mappedHeaders['name'] ?? ''] ?? $headerMapping['name']['default'] ?? null,
                 'vendor_id' => Auth::id(),
@@ -578,6 +580,11 @@ class ProductController extends Controller
                     }
                 }
             }
+        }
+
+        
+        if (!empty($duplicateSkus)) {
+            session::flash('duplicateSkus', $duplicateSkus);
         }
 
         return redirect()->route('product.index')->with('success! ', $count . ' Products imported successfully.');
