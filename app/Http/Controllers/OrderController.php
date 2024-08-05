@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\WpOrder;
 use App\Models\WpOrderProduct;
+use App\Models\WpProduct;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Order;
@@ -57,12 +59,45 @@ class OrderController extends Controller
                              $query->where('fullfilled_status', $reqStatus);
                          }
                      }
-        
+
+                     
+            // Apply min_weight filter
+            if ($request->has('min_weight') && $request->min_weight) {
+                $query->whereHas('products.product', function ($q) use ($request) {
+                        $q->where('CTS', '>=', $request->min_weight);
+                });
+            }
+
+            // Apply max_weight filter
+            if ($request->has('max_weight') && $request->max_weight) {
+                $query->whereHas('products.product', function ($q) use ($request) {
+                        $q->where('CTS', '<=', $request->max_weight);
+                });
+            }
+            
+            
+            // category filter
+            if ($request->has('category') && $request->category) {
+                $query->whereHas('products.product', function ($q) use ($request) {
+                    $q->where('category_id', $request->category);
+                });
+            }
+
 
         $orders = $query->orderBy('order_date','DESC')
         ->orderBy('order_id','DESC')->paginate(10);
 
-        return view('backend.order.index')->with('orders',$orders);
+        // Get unique category IDs
+        $FilterCategoryIds = WpProduct::whereIn('wp_product_id', function ($subQuery) use ($query) {
+            $subQuery->select('product_id')
+                ->from('wp_order_products')
+                ->whereIn('order_id', $query->pluck('order_id'));
+        })->distinct()->pluck('category_id');
+
+        // Get full category details
+        $FilterCategories = Category::whereIn('id', $FilterCategoryIds)->get();
+        
+        return view('backend.order.index')->with('orders',$orders)->with('FilterCategories', $FilterCategories);
     }
 
     /**

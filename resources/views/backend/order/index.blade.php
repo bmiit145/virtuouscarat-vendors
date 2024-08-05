@@ -40,7 +40,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <form class="filter-order-form" id="filter-order-form">
+                    <form class="filter-order-form" id="filterForm">
                         <!-- Status Filter -->
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
@@ -68,20 +68,37 @@
                         </div>
 
                         <!-- Attributes Filter -->
+
+                        <!-- Category -->
                         <div class="mb-3">
-                            <label for="attributes" class="form-label">Attributes</label>
-                            <select id="attributes" class="form-select">
-                                <option value="">-- Select Attribute --</option>
-                                <option value="color">Color</option>
-                                <option value="size">Size</option>
-                                <!-- Add more attributes as needed -->
+                            <label for="status" class="form-label">Category</label>
+                            <select id="status" class="form-select" name="category">
+                                <option value="">-- Select Status --</option>
+                                @foreach($FilterCategories as $category)
+                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->title }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
+
+                        <!-- Caret Weight -->
+                        <div class="d-flex mb-3">
+                            <div class="mx-1">
+                                <label for="min_weight" class="form-label">Min Caret Weight</label>
+                                <input type="number" class="form-control" name="min_weight" id="min_weight" min="0" step="any" value="{{ request('min_weight') }}" >
+                            </div>
+                            <div class="mx-1">
+                                <label for="max_weight" class="form-label">Max Caret Weight</label>
+                                <input type="number" class="form-control" name="max_weight" id="max_weight" min="0" step="any" value="{{ request('max_weight') }}">
+                            </div>
+                        </div>
+
 
                         <!-- Action Buttons -->
                         <div class="row">
                             <div class="col-6">
-                                <button type="reset" class="btn btn-secondary btn-sm w-100">Clear All</button>
+                                <button type="button" class="btn btn-secondary btn-sm w-100" onclick="resetForm()">Clear All</button>
                             </div>
                             <div class="col-6">
                                 <button type="submit" class="btn btn-info btn-sm w-100 text-center">Apply Filter</button>
@@ -90,8 +107,6 @@
                     </form>
                 </div>
             </div>
-            
-            
         </div>
       </div>
     <div class="card-body">
@@ -360,4 +375,16 @@
                 });
             });
         </script>
+        <script>
+
+function resetForm() {
+          // document.getElementById('filterForm').reset();
+
+          var form = document.getElementById('filterForm');
+            var elements = form.elements;
+            for (var i = 0, len = elements.length; i < len; ++i) {
+                elements[i].value = '';
+            }
+      }
+</script>
 @endpush
