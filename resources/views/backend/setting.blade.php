@@ -44,7 +44,7 @@
                                         <label for="company_name" class="col-form-label"><b>Company Name</b><span
                                                 class="text-danger"></span></label>
                                         <input type="text" class="form-control" id="company_name"
-                                            value="{{ $data->name ?? '' }}" name="company_name" required>
+                                            value="{{ $data->company_name ?? '' }}" name="company_name" required>
                                         @error('company_name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -90,7 +90,7 @@
                                         <label for="contact_person_alternate_email" class="col-form-label"><b>Contact Person
                                                 Alternate Email</b><span class="text-danger"></span></label>
                                         <input type="text" class="form-control" id="contact_person_alternate_email"
-                                            value="{{ $data->alternate_email ?? '' }}" name="contact_person_alternate_email"
+                                            value="{{ $data->alternate_mail ?? '' }}" name="contact_person_alternate_email"
                                             required>
                                         @error('contact_person_alternate_email')
                                             <span class="text-danger">{{ $message }}</span>
@@ -134,19 +134,11 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
-                                    <label for="communication_address" class="col-form-label"><b>Communication Address</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->communication_address ?? '' }}" class="form-control"
-                                        id="communication_address" name="communication_address" required>
-                                    @error('communication_address')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
                                     <label for="city" class="col-form-label"><b>City</b><span
                                             class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->city ?? '' }}" class="form-control"
-                                        id="city" name="city" required>
+
+                                    <input type="text"  class="form-control"
+                                        id="city" name="city" value="{{ $user->user->city ?? '' }}" required>
                                     @error('city')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
@@ -154,7 +146,7 @@
                                 <div class="form-group col-6">
                                     <label for="state" class="col-form-label"><b>State</b><span
                                             class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->state ?? '' }}" class="form-control"
+                                    <input type="text" value="{{ $user->user->state ?? '' }}" class="form-control"
                                         id="state" name="state" required>
                                     @error('state')
                                         <span class="text-danger">{{ $message }}</span>
@@ -163,7 +155,7 @@
                                 <div class="form-group col-6">
                                     <label for="pincode" class="col-form-label"><b>Pincode</b><span
                                             class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->pincode ?? '' }}" class="form-control"
+                                    <input type="text" value="{{ $user->user->pincode ?? '' }}" class="form-control"
                                         id="pincode" name="pincode" required>
                                     @error('pincode')
                                         <span class="text-danger">{{ $message }}</span>
@@ -172,7 +164,7 @@
                                 <div class="form-group col-6">
                                     <label for="website" class="col-form-label"><b>Website</b><span
                                             class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->website ?? '' }}" class="form-control"
+                                    <input type="text" value="{{ $user->user->website ?? '' }}" class="form-control"
                                         id="website" name="website" required>
                                     @error('website')
                                         <span class="text-danger">{{ $message }}</span>
@@ -223,6 +215,15 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                <div class="form-group col-6">
+                                    <label for="communication_address" class="col-form-label"><b>Communication Address</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->communication_address ?? '' }}" id="communication_address"
+                                        class="form-control" name="communication_address" required>
+                                    @error('communication_address')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                             <div class="form-group col-12 mb-3 d-flex justify-content-center">
                                 <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP()">Update Business
@@ -268,11 +269,13 @@
     @endpush
 
     @push('scripts')
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-        <script src="{{ asset('backend/summernote/summernote.min.js') }}"></script>
-        <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Bootstrap JS after jQuery -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('backend/summernote/summernote.min.js') }}"></script>
+    <script src="/vendor/laravel-filemanager/js/stand-alone-button.js"></script>
 
         <script>
             $('#lfm').filemanager('image');
@@ -331,6 +334,7 @@
                 var formData = {
                     id : $('#id').val(),
                     contact_person_name: $('#contact_person_name').val(),
+                    company_name: $('#company_name').val(),
                     contact_person_mobile: $('#contact_person_mobile').val(),
                     contact_person_alternate_number: $('#contact_person_alternate_number').val(),
                     contact_person_alternate_email: $('#contact_person_alternate_email').val(),
@@ -370,6 +374,11 @@
                     ifsc_code: $('#ifsc_code').val(),
                     brand_name: $('#brand_name').val(),
                     gst_number: $('#gst_number').val(),
+                    communication_address: $('#communication_address').val(),
+                    city: $('#city').val(),
+                    state: $('#state').val(),
+                    pincode: $('#pincode').val(),
+                    website: $('#website').val(),
                     _token: '{{ csrf_token() }}'
                 };
 
@@ -378,9 +387,24 @@
                     type: 'POST',
                     data: formData,
                     success: function(response) {
-                        $('#otp').val('');
-                        $('#otpModal').modal('hide');
-                        toastr.success(response.message);
+                        console.log('Main response:', response); // Log the entire response to the console
+
+                        if (response.success) {
+                            $('#otp').val('');
+                            $('#otpModal').modal('hide');
+                            toastr.success(response.message);
+                            
+                            // Ensure the response contains the user object and its properties
+                            if (response.user) {
+                                console.log(response.user.city , "User data"); // Log the user object to the console
+                                $('#city').val(response.user.city ?? '');
+                                $('#state').val(response.user.state ?? '');
+                                $('#pincode').val(response.user.pincode ?? '');
+                                $('#website').val(response.user.website ?? '');
+                            } else {
+                                console.error('User data is not present in the response');
+                            }
+                        }
                     },
                     error: function(response) {
                         $('#otp').val('');

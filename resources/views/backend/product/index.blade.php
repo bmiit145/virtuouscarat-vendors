@@ -75,8 +75,8 @@
 {{--                      <sub>{{$product->Category->title}}</sub>--}}
                   </td>
                     <td>
-                        {{$product->name}} <br>
-                        <span>( Color : {{$ProdColor . ', Clarity : ' . $prodClarity . ', Cut : ' . $prodCut . ', Measurement : ' . $prodMeasurement}} )</span> </td>
+                        {{$product->name}}
+                        <sub>( {{$ProdColor . ' ' . $prodClarity . ' ' . $prodCut . ' ' . $prodMeasurement}} )</sub>
                     </td>
                     <td>${{$product->RAP}}</td>
                     <td>${{$product->price}}</td>
