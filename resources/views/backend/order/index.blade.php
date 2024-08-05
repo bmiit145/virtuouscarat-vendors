@@ -1,5 +1,8 @@
 @extends('backend.layouts.master')
+@push('styles')
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
+@endpush
 @section('main-content')
 <style>
 
@@ -27,88 +30,89 @@
          </div>
      </div>
      <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
-        <div class="float-right d-flex">
-                    <button type="submit" id="approve-all" class="btn btn-primary bg-info border-0 btn-sm mx-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" title="Filter All Products">
-                        <span class="py-1"> <i class="fas fa-filter"></i> Filter All</span>
-                    </button>
-        <a href="#" class="btn btn-primary btn-sm mx-1 refresh_btn" >   <i class="fas fa-sync"></i></a>
+         <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+         <div class="float-right d-flex">
+             <button type="submit" id="approve-all" class="btn btn-primary bg-info border-0 btn-sm mx-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" title="Filter All Products">
+                 <span class="py-1"> <i class="fas fa-filter"></i> Filter All</span>
+             </button>
 
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasRightLabel">Filters</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <form class="filter-order-form" id="filterForm">
-                        <!-- Status Filter -->
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select id="status" class="form-select" name="status">
-                                <option value="">-- Select Status --</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="approved_by_vendor" {{ request('status') == 'approved_by_vendor' ? 'selected' : '' }}>Approved By Vendor</option>
-                                <option value="rejected_by_vendor" {{ request('status') == 'rejected_by_vendor' ? 'selected' : '' }}>Rejected By Vendor</option>
-                                <option value="pending_by_vendor" {{ request('status') == 'pending_by_vendor' ? 'selected' : '' }}>Pending By Vendor</option>
-                                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            </select>
-                        </div>
+             <a href="#" class="btn btn-primary btn-sm mx-1 refresh_btn" >
+                 <i class="fas fa-sync"></i>
+             </a>
+         </div>
+             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                 <div class="offcanvas-header">
+                     <h5 class="offcanvas-title" id="offcanvasRightLabel">Filters</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                 </div>
+                 <div class="offcanvas-body">
+                     <form class="filter-order-form" id="filterForm">
+                         <!-- Status Filter -->
+                         <div class="mb-3">
+                             <label for="status" class="form-label">Status</label>
+                             <select id="status" class="form-select" name="status">
+                                 <option value="">-- Select Status --</option>
+                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                 <option value="approved_by_vendor" {{ request('status') == 'approved_by_vendor' ? 'selected' : '' }}>Approved By Vendor</option>
+                                 <option value="rejected_by_vendor" {{ request('status') == 'rejected_by_vendor' ? 'selected' : '' }}>Rejected By Vendor</option>
+                                 <option value="pending_by_vendor" {{ request('status') == 'pending_by_vendor' ? 'selected' : '' }}>Pending By Vendor</option>
+                                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                 <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                             </select>
+                         </div>
 
-                        <!-- Date Range Filter -->
-                        <div class="d-flex mb-3">
-                        <div class="mx-1">
-                            <label for="start_date" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" name="start_date" id="start_date" value="{{ request('start_date') }}">
-                        </div>
-                        <div class="mx-1">
-                            <label for="end_date" class="form-label">End Date</label>
-                            <input type="date" class="form-control" name="end_date" id="end_date" value="{{ request('end_date') }}">
-                        </div>
-                        </div>
+                         <!-- Date Range Filter -->
+                         <div class="d-flex mb-3">
+                             <div class="mx-1">
+                                 <label for="start_date" class="form-label">Start Date</label>
+                                 <input type="date" class="form-control" name="start_date" id="start_date" value="{{ request('start_date') }}">
+                             </div>
+                             <div class="mx-1">
+                                 <label for="end_date" class="form-label">End Date</label>
+                                 <input type="date" class="form-control" name="end_date" id="end_date" value="{{ request('end_date') }}">
+                             </div>
+                         </div>
 
-                        <!-- Attributes Filter -->
+                         <!-- Attributes Filter -->
 
-                        <!-- Category -->
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Category</label>
-                            <select id="status" class="form-select" name="category">
-                                <option value="">-- Select Status --</option>
-                                @foreach($FilterCategories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->title }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                         <!-- Category -->
+                         <div class="mb-3">
+                             <label for="status" class="form-label">Category</label>
+                             <select id="status" class="form-select" name="category">
+                                 <option value="">-- Select Status --</option>
+                                 @foreach($FilterCategories as $category)
+                                     <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                         {{ $category->title }}
+                                     </option>
+                                 @endforeach
+                             </select>
+                         </div>
 
-                        <!-- Caret Weight -->
-                        <div class="d-flex mb-3">
-                            <div class="mx-1">
-                                <label for="min_weight" class="form-label">Min Caret Weight</label>
-                                <input type="number" class="form-control" name="min_weight" id="min_weight" min="0" step="any" value="{{ request('min_weight') }}" >
-                            </div>
-                            <div class="mx-1">
-                                <label for="max_weight" class="form-label">Max Caret Weight</label>
-                                <input type="number" class="form-control" name="max_weight" id="max_weight" min="0" step="any" value="{{ request('max_weight') }}">
-                            </div>
-                        </div>
+                         <!-- Caret Weight -->
+                         <div class="d-flex mb-3">
+                             <div class="mx-1">
+                                 <label for="min_weight" class="form-label">Min Caret Weight</label>
+                                 <input type="number" class="form-control" name="min_weight" id="min_weight" min="0" step="any" value="{{ request('min_weight') }}" >
+                             </div>
+                             <div class="mx-1">
+                                 <label for="max_weight" class="form-label">Max Caret Weight</label>
+                                 <input type="number" class="form-control" name="max_weight" id="max_weight" min="0" step="any" value="{{ request('max_weight') }}">
+                             </div>
+                         </div>
 
-
-                        <!-- Action Buttons -->
-                        <div class="row">
-                            <div class="col-6">
-                                <button type="button" class="btn btn-secondary btn-sm w-100" onclick="resetForm()">Clear All</button>
-                            </div>
-                            <div class="col-6">
-                                <button type="submit" class="btn btn-info btn-sm w-100 text-center">Apply Filter</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-      </div>
+                         <!-- Action Buttons -->
+                         <div class="row">
+                             <div class="col-6">
+                                 <button type="button" class="btn btn-secondary btn-sm w-100" onclick="resetForm()">Clear All</button>
+                             </div>
+                             <div class="col-6">
+                                 <button type="submit" class="btn btn-info btn-sm w-100 text-center">Apply Filter</button>
+                             </div>
+                         </div>
+                     </form>
+                 </div>
+             </div>
+     </div>
     <div class="card-body">
       <div class="table-responsive">
 
