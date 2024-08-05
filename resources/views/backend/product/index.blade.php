@@ -95,8 +95,9 @@
                              <button class="badge bg-danger-light rounded-pill" style="cursor: unset;">Rejected</button>
                          @endif
                     </td>
-                    
+
                     <td>
+                        @if($product->is_approvel == 0)
                      <div style="text-align: center">
                     <a  id="actionMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                       <i class="fas fa-ellipsis-v"></i>
@@ -114,6 +115,7 @@
                       </form>
                     </div>
                   </div>
+                        @endif
                     </td>
                 </tr>
             @endforeach
@@ -146,7 +148,7 @@
         display: flex;
         align-items: center;
       }
-      
+
       .btn i {
         margin-right: 8px; /* Adjust spacing between icon and text */
       }
