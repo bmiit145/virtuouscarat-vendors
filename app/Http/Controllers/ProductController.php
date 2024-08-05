@@ -480,6 +480,15 @@ class ProductController extends Controller
 
         foreach ($rows as $row) {
             $data = array_combine($headers, $row);
+
+            
+            // find duplicate sku
+            $sku = $data[$mappedHeaders['sku'] ?? ''] ?? $headerMapping['sku']['default'] ?? null;
+            if($sku != null && WpProduct::where('sku', $sku)->exists()){
+                $duplicateSkus[] = $sku;
+                continue;
+            }
+            
             $productData = [
                 'name' => $data[$mappedHeaders['name'] ?? ''] ?? $headerMapping['name']['default'] ?? null,
                 'vendor_id' => Auth::id(),
