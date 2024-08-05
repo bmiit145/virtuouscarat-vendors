@@ -4,15 +4,15 @@
 <style>
 
     .table tbody tr {
-        transition: background-color 0.3s ease; 
+        transition: background-color 0.3s ease;
     }
 
     .table tbody tr:hover {
-        background-color: #f1f1f1; 
+        background-color: #f1f1f1;
     }
 
     .table tbody tr.highlight-hover {
-        background-color: #f1f1f1; 
+        background-color: #f1f1f1;
     }
 
     .fixed-text {
@@ -28,8 +28,71 @@
      </div>
      <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+        <div class="float-right d-flex">
+                    <button type="submit" id="approve-all" class="btn btn-primary bg-info border-0 btn-sm mx-1" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" title="Filter All Products">
+                        <span class="py-1"> <i class="fas fa-filter"></i> Filter All</span>
+                    </button>
         <a href="#" class="btn btn-primary btn-sm mx-1 refresh_btn" >   <i class="fas fa-sync"></i></a>
-  
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasRightLabel">Filters</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form class="filter-order-form" id="filter-order-form">
+                        <!-- Status Filter -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select id="status" class="form-select" name="status">
+                                <option value="">-- Select Status --</option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="approved_by_vendor" {{ request('status') == 'approved_by_vendor' ? 'selected' : '' }}>Approved By Vendor</option>
+                                <option value="rejected_by_vendor" {{ request('status') == 'rejected_by_vendor' ? 'selected' : '' }}>Rejected By Vendor</option>
+                                <option value="pending_by_vendor" {{ request('status') == 'pending_by_vendor' ? 'selected' : '' }}>Pending By Vendor</option>
+                                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            </select>
+                        </div>
+
+                        <!-- Date Range Filter -->
+                        <div class="d-flex mb-3">
+                        <div class="mx-1">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="start_date" id="start_date" value="{{ request('start_date') }}">
+                        </div>
+                        <div class="mx-1">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" class="form-control" name="end_date" id="end_date" value="{{ request('end_date') }}">
+                        </div>
+                        </div>
+
+                        <!-- Attributes Filter -->
+                        <div class="mb-3">
+                            <label for="attributes" class="form-label">Attributes</label>
+                            <select id="attributes" class="form-select">
+                                <option value="">-- Select Attribute --</option>
+                                <option value="color">Color</option>
+                                <option value="size">Size</option>
+                                <!-- Add more attributes as needed -->
+                            </select>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="reset" class="btn btn-secondary btn-sm w-100">Clear All</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-info btn-sm w-100 text-center">Apply Filter</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            
+        </div>
       </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -43,7 +106,7 @@
                 <th>
                     <span class="fixed-text">Product Name</span><br>
                 </th>
-                <th>QTY</th>
+{{--                <th>QTY</th>--}}
 {{--                <th>Vendor Name</th>--}}
 {{--              <th>Email</th>--}}
 {{--              <th>Charge</th>--}}
@@ -87,9 +150,9 @@
                     <span>( Color : {{$ProdColor . ', Clarity : ' . $prodClarity . ', Cut : ' . $prodCut . ', Measurement : ' . $prodMeasurement}} )</span> </td>
                     </span><br/>
                 </td>
-                <td>
-                    <span>{{ $product->quantity }}</span><br/>
-                </td>
+{{--                <td>--}}
+{{--                    <span>{{ $product->quantity }}</span><br/>--}}
+{{--                </td>--}}
                     <td>
                         @if($product->product)
                             <span>₹{{ $product->total }}<sub>₹{{ $product->price }}</sub></span>
