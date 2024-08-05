@@ -130,6 +130,7 @@ class AdminController extends Controller
     {
         // dd($request->all());
         $validatedData = $request->validate([
+            'company_name' => 'required|string|max:255',
             'contact_person_name' => 'required|string|max:255',
             'contact_person_mobile' => 'required|string|max:15',
             'contact_person_alternate_number' => 'nullable|string|max:15',
@@ -141,9 +142,10 @@ class AdminController extends Controller
         $user = User::find($id);
         $user->update([
             'name' => $request->contact_person_name,
+            'company_name' => $request->company_name,
             'phone' => $request->contact_person_mobile,
             'alternate_number' => $request->contact_person_alternate_number,
-            'alternate_email' => $request->contact_person_alternate_email,
+            'alternate_mail' => $request->contact_person_alternate_email,
         ]);
 
         return response()->json([
@@ -163,6 +165,7 @@ class AdminController extends Controller
             'ifsc_code' => 'required|string|max:11',
             'brand_name' => 'required|string|max:255',
             'gst_number' => 'required|string|max:15',
+            'communication_address' => 'required|string|max:255',
         ]);
 
         $id = Auth::user()->id;
@@ -177,12 +180,22 @@ class AdminController extends Controller
                 'ifsc_code' => $request->ifsc_code,
                 'brand_name' => $request->brand_name,
                 'gst' => $request->gst_number,
+                'communication_address' => $request->communication_address,
             ]
         );
 
+        // Update city, state, pincode, and website in users table
+        $user = User::find($id);
+        $user->city = $request->city;
+        $user->state = $request->state;
+        $user->pincode = $request->pincode;
+        $user->website = $request->website;
+        $user->update();
+
         return response()->json([
             'success' => true,
-            'message' => 'Business details updated successfully.'
+            'message' => 'Business details updated successfully.',
+            'user' => $user,
         ]);
     }
 
