@@ -88,11 +88,11 @@
 {{--                    <td>  {{$product->quantity }}</td>--}}
 
                     <td>  @if($product->is_approvel == 0)
-                              <button class="badge bg-warning-light rounded-pill" style="cursor: unset;">Pending</button>
+                              <button class="badge bg-warning-light rounded-pill" style="cursor: unset; border:0">Pending</button>
                           @elseif($product->is_approvel == 1)
-                          <button class="badge bg-success-light rounded-pill" style="cursor: unset;">Approved</button>
+                          <button class="badge bg-success-light rounded-pill" style="cursor: unset; border:0">Approved</button>
                          @else
-                             <button class="badge bg-danger-light rounded-pill" style="cursor: unset;">Rejected</button>
+                             <button class="badge bg-danger-light rounded-pill" style="cursor: unset; border:0">Rejected</button>
                          @endif
                     </td>
 

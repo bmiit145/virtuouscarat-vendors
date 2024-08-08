@@ -98,7 +98,7 @@ class ProductController extends Controller
     }
 
     protected  $attributeMapping = [
-        'TYPE' => ['type', 'TYPE' , 'Growth Type'],
+        'TYPE' => ['TREATMENT' , 'type', 'TYPE' , 'Growth Type' ],
         'LAB' => ['lab', 'LAB' , 'Lab'],
         'SHAPE' => ['shape', 'SHAPE' , 'Shape'],
         'Carat Weight' => ['CTS', 'CARAT' , 'CARAT WEIGHT' , 'Weight' , 'WEIGHT' , 'WEIGHT (CTS)'],
@@ -406,7 +406,7 @@ class ProductController extends Controller
 
         $regular_price = $price + ($price * 10 / 100);
         $sale_price = $discounted_price + ($discounted_price * 10 / 100);
-        $product_name = $request->CTS . ' ct ' . $request->category_id;
+        $product_name = $request->CTS . 'ct ' . $request->category_id;
 
         $wpProduct = WpProduct::create([
             'vendor_id' => Auth::id(),
@@ -476,12 +476,19 @@ class ProductController extends Controller
         $headerMapping = $this->headerMapping;
         $mappedHeaders = $this->mapHeaders($headers, $this->headerMapping);
         $mappedAttributes = $this->mapAttributes($headers, $this->attributeMapping);
+
         $count = 0;
 
         foreach ($rows as $row) {
             $data = array_combine($headers, $row);
 
-            
+            if($mappedAttributes['TYPE'] == 'TYPE'){
+                $data['TYPE'] = $row['Q'] ?? '';
+                if (isset($row['TREATMENT'])) {
+                    $data['TYPE'] = $row['TREATMENT'] ?? '';
+                }
+            }
+
             // find duplicate sku
             $sku = $data[$mappedHeaders['sku'] ?? ''] ?? $headerMapping['sku']['default'] ?? null;
             if($sku != null && WpProduct::where('sku', $sku)->exists()){
@@ -524,14 +531,14 @@ class ProductController extends Controller
 
             //category_id
             $category = Category::where('title', $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized')->first();
-            $defaultCategory = Category::where('title' , 'Uncategorized')->first() ?? Category::first(); 
+            $defaultCategory = Category::where('title' , 'Uncategorized')->first() ?? Category::first();
             $productData['category_id'] = $category->id ?? $defaultCategory->id;
             $mainPhoto = $category ? Category::getProductImageLink($category) : $this->defaultImage;
             $productData['main_photo'] = $mainPhoto;
 
             if (empty($productData['name'])) {
 //                $productData['name'] = $productData['CTS'] . ' ct ' . $productData['category'] . ' Shaped Loose Lab Grown Diamond';
-                $productData['name'] = $productData['CTS'] . ' ct ' . $productData['category'] ;
+                $productData['name'] = $productData['CTS']. 'ct ' . $productData['category'] ;
             }
 
             if (empty($productData['short_description'])) {
@@ -542,7 +549,7 @@ class ProductController extends Controller
                     // Build the short description
                     $descriptionParts = [
                         $data[$mappedAttributes['TYPE']] ?? '',
-                        'Loose Lab Grown Diamond',
+//                        'Loose Lab Grown Diamond',
                         $data[$mappedAttributes['Cut']] ?? '',
                         $data[$mappedAttributes['Clarity']] ?? '',
                         $data[$mappedAttributes['Color']] ?? '',
@@ -580,7 +587,7 @@ class ProductController extends Controller
             }
         }
 
-        
+
         if (!empty($duplicateSkus)) {
             session::flash('duplicateSkus', $duplicateSkus);
         }

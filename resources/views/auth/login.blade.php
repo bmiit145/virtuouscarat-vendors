@@ -62,7 +62,7 @@
                                 </form>
                                 Are you new?
                                 <a class="btn btn-link small" href="{{ url('register') }}">
-                                    {{ __('Creat an Account') }}
+                                    {{ __('Create an Account') }}
                                 </a>
                                 {{-- <hr> --}}
 
