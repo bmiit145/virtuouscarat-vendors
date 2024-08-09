@@ -34,9 +34,9 @@
                     <div class="col-md-6">
                         <h5>Sample Files</h5>
                         <div class="d-flex flex-wrap">
-                            <a href="{{asset('excel/sample/NIVODA-sample.xlsx')}}" class="btn btn-success mx-2 mt-1"> <i class="fas fa-download"></i> NIVODA </a>
-                            <a href="{{asset('excel/sample/Dhanlaxmi_Exports-sample.xlsx')}}" class="btn btn-success mx-2 mt-1"> <i class="fas fa-download"></i> Dhanlaxmi Exports</a>
-                            <a href="{{asset('excel/sample/vdb-sample.xlsx')}}" class="btn btn-success mx-2 mt-1"> <i class="fas fa-download"></i> vdb</a>
+                            <a href="{{asset('excel/sample/NIVODA-sample.xlsx')}}" class="btn btn-success mx-2 mt-1"> <i class="fas fa-download"></i> Format 1 </a>
+                            <a href="{{asset('excel/sample/Dhanlaxmi_Exports-sample.xlsx')}}" class="btn btn-success mx-2 mt-1"> <i class="fas fa-download"></i> Format 2</a>
+                            <a href="{{asset('excel/sample/vdb-sample.xlsx')}}" class="btn btn-success mx-2 mt-1"> <i class="fas fa-download"></i> Format 3</a>
                         </div>
                         <div class="mt-2">
                             <ol>
