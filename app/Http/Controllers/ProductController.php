@@ -449,6 +449,10 @@ class ProductController extends Controller
     }
 
 
+    public function importForm(){
+        return view('backend.product.import');
+    }
+
     public function  import(Request $request){
         $request->validate([
             'import_file' => 'required|mimes:csv,xlsx|max:2048',
@@ -469,7 +473,8 @@ class ProductController extends Controller
         }
 
         if (empty($rows)) {
-            return redirect()->route('product.index')->with('error', 'No data found in the file.');
+//            return redirect()->route('product.index')->with('error', 'No data found in the file.');
+            return redirect()->back()->with('error', 'No data found in the file.');
         }
 
         $headers = array_shift($rows);
@@ -592,8 +597,9 @@ class ProductController extends Controller
             session::flash('duplicateSkus', $duplicateSkus);
         }
 
-        return redirect()->route('product.index')->with('success! ', $count . ' Products imported successfully.');
-
+//        return redirect()->route('product.index')->with('success! ', $count . ' Products imported successfully.');
+        return redirect()->back()->with('success', 'success! '. $count . ' Products imported successfully.');
+        
     }
 
     protected function mapHeaders($headers, $headerMapping)

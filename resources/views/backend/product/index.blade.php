@@ -13,13 +13,16 @@
         <div class="float-right d-flex">
 
             @if(Auth::user()->status != 'inactive')
-            <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data" class="mr-1">
-                @csrf
-                <label for="importFile" class="btn btn-primary btn-sm mx-1 bg-success border-0" data-toggle="tooltip" data-placement="bottom" title="Import Products" style="height: 102%;">
-                    <i class="fas fa-file"></i> Import File
-                    <input id="importFile" type="file" name="import_file" accept=".csv,.xlsx" style="display: none;" onchange="this.form.submit()">
-                </label>
-            </form>
+{{--            <form action="{{ route('product.import') }}" method="POST" enctype="multipart/form-data" class="mr-1">--}}
+{{--                @csrf--}}
+{{--                <label for="importFile" class="btn btn-primary btn-sm mx-1 bg-success border-0" data-toggle="tooltip" data-placement="bottom" title="Import Products" style="height: 102%;">--}}
+{{--                    <i class="fas fa-file"></i> Import File--}}
+{{--                    <input id="importFile" type="file" name="import_file" accept=".csv,.xlsx" style="display: none;" onchange="this.form.submit()">--}}
+{{--                </label>--}}
+{{--            </form>--}}
+                <a href="{{ route('product.import.form') }}"  class="btn btn-primary btn-sm mx-1 bg-success border-0" data-toggle="tooltip" data-placement="bottom" title="Import Products" style="">
+                    <i class="fas fa-file"></i><span> Import File </span>
+                </a>
             @endif
             @if(Auth::user()->status != 'inactive')
         <a href="{{route('product.create')}}" class="btn btn-primary btn-sm mx-1" data-toggle="tooltip" data-placement="bottom" title="Add Product"><i class="fas fa-plus"></i> Add Product</a>

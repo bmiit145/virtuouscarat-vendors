@@ -173,6 +173,7 @@ Route::post('/update-bank-info', [AdminController::class, 'updateFinanceInfo'])-
 
 
     //import done
+    Route::get('/import' , 'ProductController@importForm')->name('product.import.form');
     Route::post('/product/import' , 'ProductController@import')->name('product.import');
 });
 
