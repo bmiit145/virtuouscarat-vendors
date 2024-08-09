@@ -101,10 +101,9 @@
                                     </div>
 
                                     <div class="form-group col-12 mb-3 d-flex justify-content-center">
-                                        <button class="btn btn-info p_update_btn" type="button" onclick="sendUpdateOTP()">Update Personal
+                                        <button class="btn btn-info p_update_btn" type="button" onclick="sendUpdateOTP($(this))">Update Personal
                                             Information</button>
                                     </div>
-
                                 </div>
                             </form>
                         </div>
@@ -137,6 +136,34 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
+                                    <label for="gst_number" class="col-form-label"><b>GST Number</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->gst ?? '' }}" id="gst_number"
+                                           class="form-control" name="gst_number" required>
+                                    @error('gst_number')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group col-6">
+                                    <label for="website" class="col-form-label"><b>Website</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->user->website ?? '' }}" class="form-control"
+                                           id="website" name="website" required>
+                                    @error('website')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="communication_address" class="col-form-label"><b>Communication Address</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->communication_address ?? '' }}" id="communication_address"
+                                           class="form-control" name="communication_address" required>
+                                    @error('communication_address')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
                                     <label for="city" class="col-form-label"><b>City</b><span
                                             class="text-danger"></span></label>
 
@@ -164,36 +191,9 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                                <div class="form-group col-6">
-                                    <label for="website" class="col-form-label"><b>Website</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->user->website ?? '' }}" class="form-control"
-                                        id="website" name="website" required>
-                                    @error('website')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="gst_number" class="col-form-label"><b>GST Number</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->gst ?? '' }}" id="gst_number"
-                                        class="form-control" name="gst_number" required>
-                                    @error('gst_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="communication_address" class="col-form-label"><b>Communication Address</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->communication_address ?? '' }}" id="communication_address"
-                                        class="form-control" name="communication_address" required>
-                                    @error('communication_address')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
                             </div>
                             <div class="form-group col-12 mb-3 d-flex justify-content-center">
-                                <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP()">Update Business
+                                <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP($(this))">Update Business
                                     Information</button>
                             </div>
                         </div>
@@ -245,7 +245,7 @@
                                 </div>
                             </div>
                             <div class="form-group col-12 mb-3 d-flex justify-content-center">
-                                <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP()">Update Bank
+                                <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP($(this))">Update Bank
                                     Information</button>
                             </div>
                         </div>
@@ -327,7 +327,9 @@
                     toast.css('visibility', 'hidden');
                 }, 3000);
             }
-            function sendUpdateOTP() {
+            function sendUpdateOTP(btn) {
+                // disable the button
+                btn.attr('disabled', true);
                 // send OTP to the user by ajax route sendSettingOtp
                 var url = '{{ route('sendSettingOtp') }}';
                 var id = $('#id').val();
@@ -340,6 +342,8 @@
                     },
                     success: function(response) {
                         $('#otpModal').modal('show');
+                        // enable the button
+                        btn.attr('disabled', false);
                     },
                     error: function(response) {
                         toastr.error(response.responseJSON.message);
@@ -388,16 +392,16 @@
                     id : $('#id').val(),
                     business_name: $('#business_name').val(),
                     business_type: $('#business_type').val(),
+                    gst_number: $('#gst_number').val(),
                     // bank_name: $('#bank_name').val(),
                     // bank_account_number: $('#bank_account_number').val(),
                     // ifsc_code: $('#ifsc_code').val(),
                     // branch_name: $('#branch_name').val(),
-                    gst_number: $('#gst_number').val(),
-                    communication_address: $('#communication_address').val(),
                     city: $('#city').val(),
                     state: $('#state').val(),
                     pincode: $('#pincode').val(),
                     website: $('#website').val(),
+                    communication_address: $('#communication_address').val(),
                     _token: '{{ csrf_token() }}'
                 };
 

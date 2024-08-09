@@ -128,9 +128,8 @@ class AdminController extends Controller
 
     public function updatePersonalInfo(Request $request)
     {
-        dd($request->all());
         $validatedData = $request->validate([
-            'company_name' => 'required|string|max:255',
+//            'company_name' => 'required|string|max:255',
             'contact_person_name' => 'required|string|max:255',
             'contact_person_mobile' => 'required|string|max:15',
             'contact_person_alternate_number' => 'nullable|string|max:15',
@@ -142,7 +141,7 @@ class AdminController extends Controller
         $user = User::find($id);
         $user->update([
             'name' => $request->contact_person_name,
-            'company_name' => $request->company_name,
+            'company_name' => $request->company_name ?? '',
             'phone' => $request->contact_person_mobile,
             'alternate_number' => $request->contact_person_alternate_number,
             'alternate_mail' => $request->contact_person_alternate_email,
@@ -156,7 +155,6 @@ class AdminController extends Controller
 
     public function updateBusinessInfo(Request $request)
     {
-        dd($request->all());
         $validatedData = $request->validate([
             'business_name' => 'required|string|max:255',
             'business_type' => 'required|string|max:255',
