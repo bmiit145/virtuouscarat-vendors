@@ -5,7 +5,6 @@
 @endpush
 @section('main-content')
 <style>
-
     .table tbody tr {
         transition: background-color 0.3s ease;
     }
@@ -164,10 +163,11 @@
                     <td rowspan="{{ $rowspan }}">{{ $order->billing_first_name }} {{ $order->billing_last_name }}</td>
                 @endif
                 <td>
-                    <span>{{ $product->product->sku ?? '' }} <br>
+                    <span>{{ $product->product->sku ?? '' }} <br/>
                     <span>{{ $product->product->name ?? '' }}
-                    <span>( Color : {{$ProdColor . ', Clarity : ' . $prodClarity . ', Cut : ' . $prodCut . ', Measurement : ' . $prodMeasurement}} )</span> </td>
-                    </span><br/>
+                    <span>( Color : {{$ProdColor . ', Clarity : ' . $prodClarity . ', Cut : ' . $prodCut . ', Measurement : ' . $prodMeasurement}} )</span>
+                    </span>
+                    </span>
                 </td>
 {{--                <td>--}}
 {{--                    <span>{{ $product->quantity }}</span><br/>--}}
@@ -247,6 +247,57 @@
           display: none;
       }
   </style>
+
+  <style>
+      span.toggle-handle.btn.btn-default {
+          background: #fff !important;
+      }
+      .toggle-off {
+          background: #e6e6e6 !important;
+          box-shadow: inset 0 3px 5px rgba(0,0,0,.125) !important;
+          border: 1px solid #adadad !important;
+      }
+
+      .fixed-text {
+          white-space: nowrap;
+      }
+      .table  tr th {
+          font-size: 12px;
+          font-weight: 600 !important;
+          color: rgb(63 66 82);
+          line-height: 20px !important;
+          font-style: normal !IMPORTANT;
+          font-family: "Poppins", sans-serif;
+          text-transform: uppercase;
+      }
+      .table tbody tr td {
+          font-size: 13px;
+          /*font-weight: 600 !important;*/
+          color: rgb(63 66 82);
+          line-height: 20px !important;
+          font-style: normal !IMPORTANT;
+          font-family: "Poppins", sans-serif;
+      }
+      .table .toggle-off.btn {
+          padding-left: 20px !important;
+      }
+  </style>
+  <style>
+      .table tbody tr {
+          transition: background-color 0.3s ease;
+      }
+
+      .table tbody tr:hover {
+          background-color: #f1f1f1;
+      }
+
+      :root {
+          --bs-emphasis-color-rgb : #f1f1f1;
+      }
+      .table tbody tr.highlight-hover > td{
+          background-color: #f1f1f1 !important;
+      }
+  </style>
 @endpush
 
 @push('scripts')
@@ -265,9 +316,6 @@
     });
 </script>
   <script>
-
-
-
         $(document).ready(function() {
           $('#order-dataTable').DataTable({
             "paging": true,    // Enable pagination

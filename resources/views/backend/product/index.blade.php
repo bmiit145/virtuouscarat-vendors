@@ -156,6 +156,42 @@
         margin-right: 8px; /* Adjust spacing between icon and text */
       }
   </style>
+
+  <style>
+      span.toggle-handle.btn.btn-default {
+          background: #fff !important;
+      }
+      .toggle-off {
+          background: #e6e6e6 !important;
+          box-shadow: inset 0 3px 5px rgba(0,0,0,.125) !important;
+          border: 1px solid #adadad !important;
+      }
+
+      .fixed-text {
+          white-space: nowrap;
+      }
+      .table  tr th {
+          font-size: 12px;
+          font-weight: 600 !important;
+          color: rgb(63 66 82);
+          line-height: 20px !important;
+          font-style: normal !IMPORTANT;
+          font-family: "Poppins", sans-serif;
+          text-transform: uppercase;
+      }
+      .table tbody tr td {
+          font-size: 13px;
+          /*font-weight: 600 !important;*/
+          color: rgb(63 66 82);
+          line-height: 20px !important;
+          font-style: normal !IMPORTANT;
+          font-family: "Poppins", sans-serif;
+      }
+      .table .toggle-off.btn {
+          padding-left: 20px !important;
+      }
+
+  </style>
 @endpush
 
 @push('scripts')
