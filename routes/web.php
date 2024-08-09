@@ -112,6 +112,7 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
 // Route::post('/updateSetting','AdminController@updateSetting')->name('updateSetting');
 Route::post('/update-personal-info', [AdminController::class, 'updatePersonalInfo'])->name('updatePersonalInfo');
 Route::post('/update-business-info', [AdminController::class, 'updateBusinessInfo'])->name('updateBusinessInfo');
+Route::post('/update-bank-info', [AdminController::class, 'updateFinanceInfo'])->name('updateFinanceInfo');
 
 
 //    Route::get('/','AdminController@index')->name('user');

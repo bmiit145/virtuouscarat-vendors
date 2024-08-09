@@ -28,6 +28,9 @@
                 <li class="nav-item">
                     <a class="nav-link" id="business-info-tab" data-toggle="tab" href="#business-info" role="tab" aria-controls="business-info" aria-selected="false">Business Information</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="finance-info-tab" data-toggle="tab" href="#finance-info" role="tab" aria-controls="Finance-info" aria-selected="false">Finance Information</a>
+                </li>
             </ul>
 
 
@@ -171,42 +174,6 @@
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
-                                    <label for="bank_name" class="col-form-label"><b>Bank Name</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->bank_name ?? '' }}" class="form-control"
-                                        id="bank_name" name="bank_name" required>
-                                    @error('bank_name')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="bank_account_number" class="col-form-label"><b>Bank Account
-                                            Number</b><span class="text-danger"></span></label>
-                                    <input type="number" value="{{ $user->account_number ?? '' }}" class="form-control"
-                                        id="bank_account_number" name="bank_account_number" required>
-                                    @error('bank_account_number')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="ifsc_code" class="col-form-label"><b>IFSC Code</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->ifsc_code ?? '' }}" class="form-control"
-                                        id="ifsc_code" name="ifsc_code" required>
-                                    @error('ifsc_code')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
-                                    <label for="brand_name" class="col-form-label"><b>Brand Name</b><span
-                                            class="text-danger"></span></label>
-                                    <input type="text" value="{{ $user->brand_name ?? '' }}" class="form-control"
-                                        id="brand_name" name="brand_name" required>
-                                    @error('brand_name')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="form-group col-6">
                                     <label for="gst_number" class="col-form-label"><b>GST Number</b><span
                                             class="text-danger"></span></label>
                                     <input type="text" value="{{ $user->gst ?? '' }}" id="gst_number"
@@ -227,6 +194,58 @@
                             </div>
                             <div class="form-group col-12 mb-3 d-flex justify-content-center">
                                 <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP()">Update Business
+                                    Information</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Finance Information Tab -->
+                <div class="tab-pane fade" id="finance-info" role="tabpanel" aria-labelledby="finance-info-tab">
+                    <div class="card mt-4">
+                        <h5 class="card-header">Bank Information</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-6">
+                                    <label for="bank_name" class="col-form-label"><b>Bank Name</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->bank_name ?? '' }}" class="form-control"
+                                           id="bank_name" name="bank_name" required>
+                                    @error('bank_name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="bank_account_number" class="col-form-label"><b>Bank Account
+                                            Number</b><span class="text-danger"></span></label>
+                                    <input type="number" value="{{ $user->account_number ?? '' }}" class="form-control"
+                                           id="bank_account_number" name="bank_account_number" required>
+                                    @error('bank_account_number')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="ifsc_code" class="col-form-label"><b>IFSC Code</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->ifsc_code ?? '' }}" class="form-control"
+                                           id="ifsc_code" name="ifsc_code" required>
+                                    @error('ifsc_code')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="branch_name" class="col-form-label"><b>Branch Name</b><span
+                                            class="text-danger"></span></label>
+                                    <input type="text" value="{{ $user->branch_name ?? '' }}" class="form-control"
+                                           id="branch_name" name="branch_name" required>
+                                    @error('branch_name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="form-group col-12 mb-3 d-flex justify-content-center">
+                                <button class="btn btn-info b_update_btn" type="button" onclick="sendUpdateOTP()">Update Bank
                                     Information</button>
                             </div>
                         </div>
@@ -369,10 +388,10 @@
                     id : $('#id').val(),
                     business_name: $('#business_name').val(),
                     business_type: $('#business_type').val(),
-                    bank_name: $('#bank_name').val(),
-                    bank_account_number: $('#bank_account_number').val(),
-                    ifsc_code: $('#ifsc_code').val(),
-                    brand_name: $('#brand_name').val(),
+                    // bank_name: $('#bank_name').val(),
+                    // bank_account_number: $('#bank_account_number').val(),
+                    // ifsc_code: $('#ifsc_code').val(),
+                    // branch_name: $('#branch_name').val(),
                     gst_number: $('#gst_number').val(),
                     communication_address: $('#communication_address').val(),
                     city: $('#city').val(),
@@ -393,7 +412,7 @@
                             $('#otp').val('');
                             $('#otpModal').modal('hide');
                             toastr.success(response.message);
-                            
+
                             // Ensure the response contains the user object and its properties
                             if (response.user) {
                                 console.log(response.user.city , "User data"); // Log the user object to the console
@@ -405,6 +424,39 @@
                                 console.error('User data is not present in the response');
                             }
                         }
+                    },
+                    error: function(response) {
+                        $('#otp').val('');
+                        $('#otpModal').modal('hide');
+                        let errors = response.responseJSON.errors;
+                        for (let key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                toastr.error(errors[key][0]);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function updateFinanceInfo(){
+                var url = '{{ route('updateFinanceInfo') }}';
+                var formData = {
+                    id : $('#id').val(),
+                    bank_name: $('#bank_name').val(),
+                    bank_account_number: $('#bank_account_number').val(),
+                    ifsc_code: $('#ifsc_code').val(),
+                    branch_name: $('#branch_name').val(),
+                    _token: '{{ csrf_token() }}'
+                };
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('#otp').val('');
+                        $('#otpModal').modal('hide');
+                        toastr.success(response.message);
                     },
                     error: function(response) {
                         $('#otp').val('');
@@ -448,8 +500,8 @@
                                 updatePersonalInfo();
                             } else if ($('#business-info-tab').hasClass('active')) {
                                 updateBusinessInfo();
-                            } else if ($('#kyc-info-tab').hasClass('active')) {
-                                updateKycInfo();
+                            } else if ($('#finance-info-tab').hasClass('active')) {
+                                updateFinanceInfo();
                             }
                         },
                         error: function(response) {

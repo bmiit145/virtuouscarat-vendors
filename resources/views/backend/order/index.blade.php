@@ -189,13 +189,13 @@
                     @endif
                     <td>
                         @if($product->is_fulfilled == 1)
-                            <span class="btn btn-sm btn-success" style="cursor:unset">Approved</span>
+                            <span class="badge bg-success-light rounded-pill" style="cursor:unset">Approved</span>
                         @elseif($product->is_fulfilled == 2)
-                            <span class="btn btn-sm btn-danger" style="cursor:unset">Rejected</span>
+                            <span class="badge bg-danger-light rounded-pill" style="cursor:unset">Rejected</span>
                         @elseif($product->is_fulfilled == 3)
-                            <span class="btn btn-sm btn-warning" style="cursor:unset">Pending</span>
+                            <span class="badge bg-warning-light rounded-pill" style="cursor:unset">Pending</span>
                         @elseif($product->is_fulfilled == 5)
-                            <span class="btn btn-sm btn-dark" style="cursor:unset">Cancelled</span>
+                            <span class="badge bg-dark-light rounded-pill" style="cursor:unset">Cancelled</span>
                         @endif
                     </td>
                     <td>

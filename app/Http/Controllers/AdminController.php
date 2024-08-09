@@ -128,7 +128,7 @@ class AdminController extends Controller
 
     public function updatePersonalInfo(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         $validatedData = $request->validate([
             'company_name' => 'required|string|max:255',
             'contact_person_name' => 'required|string|max:255',
@@ -154,16 +154,12 @@ class AdminController extends Controller
         ]);
     }
 
-
     public function updateBusinessInfo(Request $request)
     {
+        dd($request->all());
         $validatedData = $request->validate([
             'business_name' => 'required|string|max:255',
             'business_type' => 'required|string|max:255',
-            'bank_name' => 'required|string|max:255',
-            'bank_account_number' => 'required|string|max:255',
-            'ifsc_code' => 'required|string|max:11',
-            'brand_name' => 'required|string|max:255',
             'gst_number' => 'required|string|max:15',
             'communication_address' => 'required|string|max:255',
         ]);
@@ -196,6 +192,36 @@ class AdminController extends Controller
             'success' => true,
             'message' => 'Business details updated successfully.',
             'user' => $user,
+        ]);
+    }
+
+    public function updateFinanceInfo(Request $request){
+
+        $validatedData = $request->validate([
+            'bank_name' => 'required|string|max:255',
+//            'account_holder_name' => 'required|string|max:255',
+            'bank_account_number' => 'required|string|max:255',
+            'ifsc_code' => 'required|string|max:11',
+            'branch_name' => 'required|string|max:255',
+        ]);
+
+        $id = Auth::user()->id;
+        dump($request->all() , $id);
+
+        $finance_data = Userdetails::updateOrCreate(
+            ['user_id' => $id],
+            [
+//                'account_holder_name' => $request->account_holder_name,
+                'account_number' => $request->bank_account_number,
+                'ifsc_code' => $request->ifsc_code,
+                'bank_name' => $request->bank_name,
+                'branch_name' => $request->branch_name,
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Finance details updated successfully.',
         ]);
     }
 
