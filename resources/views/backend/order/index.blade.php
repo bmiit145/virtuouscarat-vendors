@@ -174,7 +174,9 @@
 {{--                </td>--}}
                     <td>
                         @if($product->product)
-                            <span>₹{{ $product->total }}<sub>₹{{ $product->price }}</sub></span>
+                            <span>₹{{ $product->total }}
+                                {{-- <sub>₹{{ $product->price }}</sub> --}}
+                            </span>
                         @endif
                     </td>
                 @if($index == 0)
