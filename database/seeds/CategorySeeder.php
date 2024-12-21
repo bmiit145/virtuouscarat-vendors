@@ -1,24 +1,20 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use App\Models\Category;
 
-class DatabaseSeeder extends Seeder
+class CategorySeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      *
      * @return void
      */
+
     public function run()
     {
-        $this->categoryInsert();
-         $this->call(UsersTableSeeder::class);
-         $this->call(SettingTableSeeder::class);
-//         $this->call(CouponSeeder::class);
-    }
-
-    public function categoryInsert(){
 
 //            $categoriesInUse = \App\Models\WpProduct::distinct()->pluck('category_id')->toArray();
 //            Category::whereNotIn('id', $categoriesInUse)->each(function ($category) {

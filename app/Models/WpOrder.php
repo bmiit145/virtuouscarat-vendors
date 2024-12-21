@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WpOrder extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = 'wp_orders';
 
@@ -16,6 +18,7 @@ class WpOrder extends Model
         'status',
         'currency',
         'total',
+        'customer_status_show',
         'order_date',
         'created_at',
         'updated_at',

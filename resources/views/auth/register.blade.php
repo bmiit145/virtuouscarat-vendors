@@ -151,26 +151,26 @@
             }
         });
 
-        $('#gst_number').on('input', function() {
-            var gst_number = $(this).val();
-            if (gst_number.length >= 5) {
-                $.ajax({
-                    url: 'https://sheet.gstincheck.co.in/check/c46c3385037e8bfedbf2f0965ac96155/' + gst_number,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response && !response.flag) {
-                            $('#gst_message').removeClass('text-success').addClass('text-danger').text(response.message);
-                        } else {
-                            $('#gst_message').removeClass('text-danger').addClass('text-success').text(response.message);
-                        }
-                    },
-                    error: function() {
-                        console.error('An error occurred while validating the GST number.');
-                    }
-                });
-            } else {
-                $('#gst_message').removeClass('text-success').addClass('text-danger').text('GST Number must be at least 5 characters long.');
-            }
-        });
+        // $('#gst_number').on('input', function() {
+        //     var gst_number = $(this).val();
+        //     if (gst_number.length >= 5) {
+        //         $.ajax({
+        //             url: 'https://sheet.gstincheck.co.in/check/c46c3385037e8bfedbf2f0965ac96155/' + gst_number,
+        //             method: 'GET',
+        //             success: function(response) {
+        //                 if (response && !response.flag) {
+        //                     $('#gst_message').removeClass('text-success').addClass('text-danger').text(response.message);
+        //                 } else {
+        //                     $('#gst_message').removeClass('text-danger').addClass('text-success').text(response.message);
+        //                 }
+        //             },
+        //             error: function() {
+        //                 console.error('An error occurred while validating the GST number.');
+        //             }
+        //         });
+        //     } else {
+        //         $('#gst_message').removeClass('text-success').addClass('text-danger').text('GST Number must be at least 5 characters long.');
+        //     }
+        // });
     });
 </script>

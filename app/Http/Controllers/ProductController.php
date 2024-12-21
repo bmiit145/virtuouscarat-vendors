@@ -4,16 +4,130 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\ProductAttribute;
 use App\Models\WpProduct;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\Session;
+
 
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    protected $defaultImage;
+    protected $defaultImageGallery;
+    protected $headerMapping;
+
+    public function __construct(){
+        $this->defaultImage = asset('storage/CategoryProductImage/default.jpeg');
+        $this->defaultImageGallery = [
+        ];
+
+        $this->headerMapping = [
+            'name' => [
+                'header' => ['name'],
+                'default' => null
+            ],
+            'description' => [
+                'header' => ['DESCRIPTION'],
+                'default' => 'No description available.'
+            ],
+            'short_description' => [
+                'header' => ['SHORT DESCRIPTION'],
+                'default' => null
+            ],
+            'sku' => [
+                'header' => ['sku' , 'SKU' , 'REPORTNO' , 'REPORT #' ,  'Certificate #'],
+                'default' => null
+            ],
+            'igi_certificate' => [
+                'header' => ['CERTI LINK'],
+                'default' => null
+            ],
+            'category' => [
+                'header' => ['SHAPE' , 'Shape' ],
+                'default' => 'Uncategorized'
+            ],
+            'main_photo' => [
+                'header' => ['Image Link' , 'Image' , 'main_photo' ],
+                'default' => $this->defaultImage
+            ],
+            'photo_gallery' => [
+                'header' => ['photo_gallery' , 'photo_gallery' , 'photo_gallery' ],
+                'default' =>  json_encode($this->defaultImageGallery)
+            ],
+            'quantity' => [
+                'header' => ['quantity'],
+                'default' => 1
+            ],
+            'document_number' => [
+                'header' => ['REPORTNO' , 'REPORT #' , 'RE FNO.' , 'RE FNO.Ψ' , 'Certificate #'],
+                'default' => null
+            ],
+            'video_link' => [
+                'header' => ['video_link' , '360 VIDEO LINKS' , 'Video Link'],
+                'default' => null
+            ],
+            'location' => [
+                'header' => ['LOC' , 'LOCATION' , 'Location' , 'City'],
+                'default' => null
+            ],
+            'comment' => [
+                'header' => ['COMMENT' , 'COMMENT Ψ' , ],
+                'default' => null
+            ],
+            'CTS' => [
+                'header' => ['CTS', 'CARAT' , 'CARAT WEIGHT' , 'Weight' , 'WEIGHT' , 'WEIGHT (CTS)'],
+                'default' => 0
+            ],
+            'RAP' => [
+                'header' => ['RAP' , 'RAP PRICE' , 'Price' , 'PRICE' , 'PRICE (RAP)'],
+                'default' => 0
+            ],
+            'discount' => [
+                'header' => ['discount' , 'DISCOUNT' , 'Discount Percent'],
+                'default' => 0
+            ],
+        ];
+
+    }
+
+    protected  $attributeMapping = [
+        'TYPE' => ['TREATMENT' , 'type', 'TYPE' , 'Growth Type' ],
+        'LAB' => ['lab', 'LAB' , 'Lab'],
+        'SHAPE' => ['shape', 'SHAPE' , 'Shape'],
+        'Carat Weight' => ['CTS', 'CARAT' , 'CARAT WEIGHT' , 'Weight' , 'WEIGHT' , 'WEIGHT (CTS)'],
+        'Cut' => ['cut', 'CUT' , 'Cut Grade'],
+        'Color' => ['color', 'COLOR' , 'Color' , 'COL'],
+        'Fancy Color' => ['Fancy Color'],
+        'Fancy Color Intensity' => ['Fancy Color Intensity'],
+        'Fancy Color Overtone' => ['Fancy Color Overtone'],
+        'Clarity' => ['clarity', 'CLARITY' , 'Clarity' , 'CLARITY '],
+        'Fluorescence Intensity' => ['fl', 'FL' , 'Fluorescence Intensity' , 'floInt'],
+        'Growth Type' => ['Growth Type'],
+        'POLISH' => ['polish', 'POLISH' , 'Polish' , 'POL'],
+        'Symmetry' => ['sym', 'SYM' , 'Symmetry' , 'SYMMETRY'],
+        'Measurement' => ['measurement', 'MEASUREMENT' , 'Measurements' , 'MEASUREMENT '],
+        'TBL' => ['tbl', 'TBL' , 'Table Percent' , 'Table %' , 'TABLE %'],
+        'T.DEPTH' => ['t_depth', 'T.DEPTH' ,'Depth Percent' , 'Depth %'],
+        'Ratio' => ['Ratio'],
+        'BGM' => ['bgm', 'BGM' , 'BGM'],
+        'Laser Inscription' => ['Laser Inscription'],
+        'Member Comments' => ['Member Comments'],
+        'Pair' => ['Pair'],
+        'H&A' => ['H&A' , 'H&A'],
+        'Eye Clean' => ['Eye Clean' , 'EYECLEAN'],
+        'LOCATION' => ['location', 'LOC' , 'City'],
+        'MILKY' => ['milky', 'MILKY' , 'Milky'],
+        'LUSTER' => ['luster', 'LUSTER' , 'Luster'],
+        'TREATMENT' => ['TREATMENT']
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -28,7 +142,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products=WpProduct::getAllProduct();
+        $products=WpProduct::where('vendor_id',Auth::id())->orderBy('created_at', 'desc')->orderBy('wp_product_id','desc')->get();
         // return $products;
         return view('backend.product.index')->with('products',$products);
     }
@@ -58,6 +172,26 @@ class ProductController extends Controller
         //
     }
 
+    public function removeGalleryImage(Request $request)
+    {
+        // dd($request->all());
+        $imageUrl = $request->imageUrl;
+
+        // Logic to remove $imageUrl from $product->photo_gallery
+        $product = WpProduct::find($request->id); // Adjust this to fetch your product
+
+        $gallery = json_decode($product->photo_gallery);
+
+        // Remove the image URL from the array
+        $gallery = array_values(array_diff($gallery, [$imageUrl]));
+
+        // Update the product's photo_gallery field
+        $product->photo_gallery = json_encode($gallery);
+        $product->save();
+
+        return response()->json(['success' => true]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -85,42 +219,78 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $product=Product::findOrFail($id);
-        $this->validate($request,[
-            'title'=>'string|required',
-            'summary'=>'string|required',
-            'description'=>'string|nullable',
-            'photo'=>'string|required',
-            'size'=>'nullable',
-            'stock'=>"required|numeric",
-            'cat_id'=>'required|exists:categories,id',
-            'child_cat_id'=>'nullable|exists:categories,id',
-            'is_featured'=>'sometimes|in:1',
-            'brand_id'=>'nullable|exists:brands,id',
-            'status'=>'required|in:active,inactive',
-            'condition'=>'required|in:default,new,hot',
-            'price'=>'required|numeric',
-            'discount'=>'nullable|numeric'
-        ]);
+        // return $request->all();
+        $product = WpProduct::findOrFail($id);
+        $old_product = clone $product;
+        $sku = $old_product->sku;
 
-        $data=$request->all();
-        $data['is_featured']=$request->input('is_featured',0);
-        $size=$request->input('size');
-        if($size){
-            $data['size']=implode(',',$size);
+        // Update main photo
+        if ($request->file('photo')) {
+            $mainPhotoPath = $request->file('photo')->store('photos', 'public');
+            $fullMainPhotoUrl = asset('storage/' . $mainPhotoPath);
+            $product->main_photo = $fullMainPhotoUrl;
         }
-        else{
-            $data['size']='';
+
+        // Update photo gallery
+        $galleryPaths = [];
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $galleryImage) {
+                $path = $galleryImage->store('photos', 'public');
+                $fullUrl = asset('storage/' . $path);
+                $galleryPaths[] = $fullUrl;
+            }
+            $product->photo_gallery = json_encode($galleryPaths);
         }
-        // return $data;
-        $status=$product->fill($data)->save();
-        if($status){
-            request()->session()->flash('success','Product updated');
+
+        $price = $request->CTS * $request->RAP;
+        $discounted_price = $price - ($price * $request->discount / 100);
+        $regular_price = $price + ($price * 10 / 100);
+        $sale_price = $discounted_price + ($discounted_price * 10 / 100);
+
+        // Update product fields
+        $product->category_id = $request->category_id;
+        $product->name = $request->prod_name;
+        $product->description = $request->description;
+        $product->short_description = $request->short_desc;
+        $product->CTS = $request->CTS;
+        $product->RAP = $request->RAP;
+        $product->price = $price;
+        $product->discount = $request->discount;
+        $product->discounted_price = $discounted_price;
+        $product->regular_price = $regular_price;
+        $product->sale_price = $sale_price;
+        $product->sku = $request->sku;
+        $product->stock_status = 1;
+        $product->igi_certificate = $request->IGI_certificate;
+        $product->quantity = $request->quantity ?? 1;
+        $product->document_number = $request->document_number ?? 123;
+        $product->video_link = $request->video_link;
+
+        // Update product attributes
+        if ($request->has('attributes')) {
+            $product->attributes()->delete();
+            foreach ($request->input('attributes') as $name => $value) {
+                $product->attributes()->create([
+                    'name' => $name,
+                    'value' => $value,
+                ]);
+            }
         }
-        else{
-            request()->session()->flash('error','Please try again!!');
+
+        // Save the product
+        $product->save();
+
+
+        $wooResponse = [];
+        // Call the WooCommerce update function
+        //  $wooResponse = WooCommerceProductController::editProductInWooCommerce($sku, $product);
+
+        if (isset($wooResponse['error'])) {
+            // Handle WooCommerce update error
+            return redirect()->route('product.index')->with('error', 'Failed to update product in WooCommerce: ' . $wooResponse['error']);
         }
-        return redirect()->route('product.index');
+
+        return redirect()->route('product.index')->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -163,21 +333,50 @@ class ProductController extends Controller
     public function store(Request $request){
         // dd($request->all());
 
-        $this->validate($request,['category_id' => 'required|integer',
-        'prod_name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'short_desc' => 'nullable|string',
-        'price' => 'nullable|numeric',
-        'sale_price' => 'nullable|numeric',
-        'sku' => 'nullable|string|max:255',
-        'quantity' => 'nullable|integer',
-        'IGI_certificate' => 'nullable|string|max:255',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'gallery' => 'nullable|array',
-        'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'attributes' => 'nullable|array']
-         );
-
+        $this->validate($request, [
+            'category_id' => 'required|exists:categories,id',
+            'prod_name' => 'sometimes|string|max:255',
+//            'price' => 'required|numeric',
+//            'sale_price' => 'nullable|numeric|lte:price',
+                'CTS' => 'required|numeric',
+                'RAP' => 'required|numeric',
+            'discount' => 'nullable|numeric',
+            'sku' => 'nullable|string|max:255|unique:wp_products,sku', // Replace 'products' with your actual table name
+            'quantity' => 'nullable|integer|min:1',
+            'IGI_certificate' => 'nullable|string|max:255',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'gallery' => 'nullable|array',
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'attributes' => 'nullable|array',
+            'attributes.*' => 'nullable|string',
+            'video_link' => 'nullable|string|max:255',
+        ], [
+            'category_id.required' => 'Category is required',
+            'category_id.exists' => 'Selected category does not exist',
+//            'prod_name.required' => 'Product name is required',
+//            'price.numeric' => 'Price must be a number',
+//            'sale_price.numeric' => 'Sale price must be a number',
+//            'sale_price.lt' => 'Sale price must be less than regular price',
+//            'sku.string' => 'SKU must be a string',
+        'CTS.required' => 'Carat Weight is required',
+        'CTS.numeric' => 'Carat Weight must be a number',
+        'RAP.required' => 'Rate Per Carat is required',
+        'RAP.numeric' => 'Rate Per Carat must be a number',
+        'discount.numeric' => 'Discount must be a number',
+            'sku.max' => 'SKU must not exceed 255 characters',
+            'sku.unique' => 'SKU already exists',
+            'quantity.integer' => 'Quantity must be an integer',
+            'quantity.min' => 'Quantity must be greater than zero',
+            'IGI_certificate.string' => 'IGI certificate must be a string',
+            'photo.image' => 'Main photo must be an image',
+            'photo.mimes' => 'Main photo must be a file of type: jpeg, png, jpg, gif, svg',
+            'photo.max' => 'Main photo may not be greater than 2048 kilobytes',
+            'gallery.array' => 'Gallery must be an array',
+            'gallery.*.image' => 'Gallery images must be images',
+            'gallery.*.mimes' => 'Gallery images must be files of type: jpeg, png, jpg, gif, svg',
+            'gallery.*.max' => 'Gallery images may not be greater than 2048 kilobytes',
+            'attributes.array' => 'Attributes must be an array',
+        ]);
 
         if ($request->hasFile('photo')) {
             $mainPhotoPath = $request->file('photo')->store('photos', 'public');
@@ -202,29 +401,43 @@ class ProductController extends Controller
             }
         }
 
+        $price = $request->CTS * $request->RAP;
+        $discounted_price = $price - ($price * $request->discount / 100);
 
+        $regular_price = $price + ($price * 10 / 100);
+        $sale_price = $discounted_price + ($discounted_price * 10 / 100);
+        $product_name = $request->CTS . 'ct ' . $request->category_id;
 
         $wpProduct = WpProduct::create([
             'vendor_id' => Auth::id(),
             'category_id' => $request->category_id,
-            'name' => $request->prod_name,
+            'name' => $request->prod_name ?? $product_name,
             'description' => $request->description,
             'short_description' => $request->short_desc,
-            'regular_price' => $request->price,
-            'sale_price' => $request->sale_price,
+            'price' => $price,
+            'discounted_price' => $discounted_price,
+            'regular_price' => $regular_price,
+            'sale_price' => $sale_price,
+            'CTS' => $request->CTS,
+            'RAP' => $request->RAP,
+            'discount' => $request->discount,
             'sku' => $request->sku,
-            'stock_status' => $request->productStatus,
+            'stock_status' => 1,
             'igi_certificate' => $request->IGI_certificate,
             'main_photo' => $fullMainPhotoUrl,
             'photo_gallery' => json_encode($galleryPaths),
-            'quantity' => $request->quantity,
+            'quantity' => $request->quantity ?? 1,
             'document_number' => $request->document_number ?? 123,
+            'video_link' => $request->video_link,
         ]);
 
 
         // Add attributes if any
             if ($request->has('attributes')) {
                 foreach ($request->input('attributes') as $name => $value) {
+                    if (empty($value)) {
+                        continue;
+                    }
                     $wpProduct->attributes()->create([
                         'name' => $name,
                         'value' => $value,
@@ -232,9 +445,208 @@ class ProductController extends Controller
                 }
             }
 
-        return redirect()->back()->with('success', 'Product created successfully.');
-
+            return redirect()->route('product.index')->with('success', 'Products Created successfully.');
     }
 
+
+    public function importForm(){
+        return view('backend.product.import');
+    }
+
+    public function  import(Request $request){
+        $request->validate([
+            'import_file' => 'required|mimes:csv,xlsx|max:2048',
+        ]);
+
+        // read and store data in database as field as name , vendor , quantity
+        $file = $request->file('import_file');
+
+        set_time_limit(300);
+        $extension = $file->getClientOriginalExtension();
+        if (in_array($extension, ['xlsx', 'xls'])) {
+            $reader = IOFactory::createReader($extension === 'xls' ? 'Xls' : 'Xlsx');
+            $spreadsheet = $reader->load($file);
+            $rows = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+        }
+        elseif ($file->getClientOriginalExtension() == 'csv') {
+            $rows = array_map('str_getcsv', file($file));
+        }
+
+        if (empty($rows)) {
+//            return redirect()->route('product.index')->with('error', 'No data found in the file.');
+            return redirect()->back()->with('error', 'No data found in the file.');
+        }
+
+        $headers = array_shift($rows);
+        $headerMapping = $this->headerMapping;
+        $mappedHeaders = $this->mapHeaders($headers, $this->headerMapping);
+        $mappedAttributes = $this->mapAttributes($headers, $this->attributeMapping);
+
+        $count = 0;
+
+        foreach ($rows as $row) {
+            $data = array_combine($headers, $row);
+
+            if($mappedAttributes['TYPE'] == 'TYPE'){
+                $data['TYPE'] = $row['Q'] ?? '';
+                if (isset($row['TREATMENT'])) {
+                    $data['TYPE'] = $row['TREATMENT'] ?? '';
+                }
+            }
+
+            // find duplicate sku
+            $sku = $data[$mappedHeaders['sku'] ?? ''] ?? $headerMapping['sku']['default'] ?? null;
+            if($sku != null && WpProduct::where('sku', $sku)->exists()){
+                $duplicateSkus[] = $sku;
+                continue;
+            }
+
+            $productData = [
+                'name' => $data[$mappedHeaders['name'] ?? ''] ?? $headerMapping['name']['default'] ?? null,
+                'vendor_id' => Auth::id(),
+                'description' => $data[$mappedHeaders['description'] ?? ''] ?? $headerMapping['description']['default'] ?? null,
+                'short_description' => $data[$mappedHeaders['short_description'] ?? ''] ?? $headerMapping['short_description']['default'] ?? null,
+                'sku' => $data[$mappedHeaders['sku'] ?? ''] ?? $headerMapping['sku']['default'] ?? null,
+                'stock_status' => 1,
+                'igi_certificate' => $data[$mappedHeaders['igi_certificate'] ?? ''] ?? $headerMapping['igi_certificate']['default'] ?? null,
+                'main_photo' => $data[$mappedHeaders['main_photo'] ?? ''] ?? $headerMapping['main_photo']['default'] ?? $this->defaultImage,
+                'photo_gallery' => $data[$mappedHeaders['photo_gallery'] ?? ''] ?? json_encode($this->defaultImageGallery) ,
+                'quantity' => $data[$mappedHeaders['quantity'] ?? ''] ?? $headerMapping['quantity']['default'] ?? 1,
+                'document_number' => $data[$mappedHeaders['document_number'] ?? ''] ?? $headerMapping['document_number']['default'] ?? null,
+                'category' => $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized',
+                'video_link' => $data[$mappedHeaders['video_link'] ?? ''] ?? $headerMapping['video_link']['default'] ?? null,
+                'location' => $data[$mappedHeaders['location'] ?? ''] ?? $headerMapping['location']['default'] ?? null,
+                'comment' => $data[$mappedHeaders['comment'] ?? ''] ?? $headerMapping['comment']['default'] ?? null,
+                'CTS' => (float)($data[$mappedHeaders['CTS'] ?? ''] ?? $headerMapping['CTS']['default'] ?? 0),
+                'RAP' => (float)($data[$mappedHeaders['RAP'] ?? ''] ?? $headerMapping['RAP']['default'] ?? 0),
+//                    'discount' => $data[$mappedHeaders['discount'] ?? ''] ?? $headerMapping['discount']['default'] ?? 0,
+                'discount' => abs((float)$data[$mappedHeaders['discount'] ?? ''] ?? $headerMapping['discount']['default'] ?? 0),
+            ];
+
+            if ($productData['sku'] == null || !is_numeric($productData['CTS']) || !is_numeric($productData['RAP']) || $productData['CTS'] == null || $productData['RAP'] == null) {
+                continue;
+            }
+
+            $productData['price'] = $productData['CTS'] * $productData['RAP'];
+            $productData['discounted_price'] = $productData['price'] - ($productData['price'] * $productData['discount'] / 100);
+
+            // add 10 % commission
+            $productData['regular_price'] = $productData['price'] + ($productData['price'] * 10 / 100);
+            $productData['sale_price'] = $productData['discounted_price'] + ($productData['discounted_price'] * 10 / 100);
+
+            //category_id
+            $category = Category::where('title', $data[$mappedHeaders['category'] ?? ''] ?? $headerMapping['category']['default'] ?? 'Uncategorized')->first();
+            $defaultCategory = Category::where('title' , 'Uncategorized')->first() ?? Category::first();
+            $productData['category_id'] = $category->id ?? $defaultCategory->id;
+            $mainPhoto = $category ? Category::getProductImageLink($category) : $this->defaultImage;
+            $productData['main_photo'] = $mainPhoto;
+
+            if (empty($productData['name'])) {
+//                $productData['name'] = $productData['CTS'] . ' ct ' . $productData['category'] . ' Shaped Loose Lab Grown Diamond';
+                $productData['name'] = $productData['CTS']. 'ct ' . $productData['category'] ;
+            }
+
+            if (empty($productData['short_description'])) {
+
+                // dd($data , $mappedAttributes);
+                if(isset($data[$mappedAttributes['TYPE']])){
+
+                    // Build the short description
+                    $descriptionParts = [
+                        $data[$mappedAttributes['TYPE']] ?? '',
+//                        'Loose Lab Grown Diamond',
+                        $data[$mappedAttributes['Cut']] ?? '',
+                        $data[$mappedAttributes['Clarity']] ?? '',
+                        $data[$mappedAttributes['Color']] ?? '',
+                        $data[$mappedAttributes['POLISH']] ?? '',
+                        $data[$mappedAttributes['Symmetry']] ?? '',
+                        $data[$mappedAttributes['Fluorescence Intensity']] ?? '',
+                        $data[$mappedAttributes['Measurement']] ?? ''
+                    ];
+
+                    // Remove any empty parts and join them with a space
+                    $productData['short_description'] = implode(' ', array_filter($descriptionParts, fn($value) => !empty($value)));
+
+                }else{
+                    $productData['short_description'] = 'No Short Description available';
+                }
+            }
+
+            // Create the product
+            $product = WpProduct::create($productData);
+            if ($product) {
+                $count++;
+                // Map and create product attributes
+                foreach ($mappedAttributes as $dbField => $excelHeader) {
+                    if (isset($data[$excelHeader])) {
+                        if (empty($data[$excelHeader])) {
+                            continue;
+                        }
+                        ProductAttribute::create([
+                            'product_id' => $product->id,
+                            'name' => $dbField,
+                            'value' => $data[$excelHeader],
+                        ]);
+                    }
+                }
+            }
+        }
+
+
+        if (!empty($duplicateSkus)) {
+            session::flash('duplicateSkus', $duplicateSkus);
+        }
+
+//        return redirect()->route('product.index')->with('success! ', $count . ' Products imported successfully.');
+        return redirect()->back()->with('success', 'success! '. $count . ' Products imported successfully.');
+        
+    }
+
+    protected function mapHeaders($headers, $headerMapping)
+    {
+        $mapped = [];
+
+        foreach ($headerMapping as $dbField => $mapping) {
+            foreach ($mapping['header'] as $possibleHeader) {
+                if (in_array($possibleHeader, $headers)) {
+                    $mapped[$dbField] = $possibleHeader;
+                    break;
+                }
+            }
+        }
+
+        return $mapped;
+    }
+
+    protected function mapAttributes($headers, $attributeMapping)
+    {
+        $mapped = [];
+
+        foreach ($attributeMapping as $dbField => $mapping) {
+            foreach ($mapping as $possibleAttribute) {
+                if (in_array($possibleAttribute, $headers)) {
+                    $mapped[$dbField] = $possibleAttribute;
+                    break;
+                }
+            }
+        }
+
+        return $mapped;
+    }
+
+    public function clearAllProducts(Request $request){
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        ProductAttribute::whereHas('product', function ($query) {
+            $query->where('vendor_id', Auth::id());
+        })->delete();
+
+        WpProduct::where('vendor_id', Auth::id())->delete();
+
+        // Re-enable foreign key checks
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        return redirect()->back()->with('success', 'All products deleted successfully.');
+    }
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,8 @@ Route::Post('logout/', 'Auth\LoginController@logout')->name('login.logout');
 
 Route::get('register/', 'Auth\LoginController@register')->name('login.register');
 Route::post('storeRegister/', 'Auth\LoginController@storeRegister')->name('login.storeRegister');
+
+Route::get('/thankyou','AdminController@thankyou')->name('thankyou');
 
 //Route::get('/','FrontendController@home')->name('home');
 Route::get('/', function (){
@@ -105,6 +108,13 @@ Route::get('payment/success', 'PayPalController@success')->name('payment.success
 
 Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     Route::get('/','AdminController@index')->name('admin');
+
+// Route::post('/updateSetting','AdminController@updateSetting')->name('updateSetting');
+Route::post('/update-personal-info', [AdminController::class, 'updatePersonalInfo'])->name('updatePersonalInfo');
+Route::post('/update-business-info', [AdminController::class, 'updateBusinessInfo'])->name('updateBusinessInfo');
+Route::post('/update-bank-info', [AdminController::class, 'updateFinanceInfo'])->name('updateFinanceInfo');
+
+
 //    Route::get('/','AdminController@index')->name('user');
     Route::get('/file-manager',function(){
         return view('backend.layouts.file-manager');
@@ -118,11 +128,17 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     // Profile
     Route::get('/profile','AdminController@profile')->name('admin-profile');
     Route::post('/profile/{id}','AdminController@profileUpdate')->name('profile-update');
+
+    Route::post('/remove-gallery-image', 'ProductController@removeGalleryImage')->name('remove.gallery.image');
+
+
+
     // Category
     Route::resource('/category','CategoryController');
     // Product
     // Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
     Route::resource('product',ProductController::class);
+    Route::post('/product/clearAll' , 'ProductController@clearAllProducts')->name('product.clearAll');
     // Ajax for sub category
     Route::post('/category/{id}/child','CategoryController@getChildByParent');
     // POST category
@@ -144,6 +160,8 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     // Settings
     Route::get('settings','AdminController@settings')->name('settings');
     Route::post('setting/update','AdminController@settingsUpdate')->name('settings.update');
+    Route::post('/send-otp' , 'AdminController@sendOtp')->name('sendSettingOtp');
+    Route::post('/verify-otp','AdminController@verifyOtpSetting')->name('verifySettingOtp');
 
     // Notification
     Route::get('/notification/{id}','NotificationController@show')->name('admin.notification');
@@ -152,6 +170,11 @@ Route::group(['prefix'=>'/vendors','middleware'=>['auth' , 'user']],function(){
     // Password Change
     Route::get('change-password', 'AdminController@changePassword')->name('change.password.form');
     Route::post('change-password', 'AdminController@changPasswordStore')->name('change.password');
+
+
+    //import done
+    Route::get('/import' , 'ProductController@importForm')->name('product.import.form');
+    Route::post('/product/import' , 'ProductController@import')->name('product.import');
 });
 
 
@@ -194,6 +217,7 @@ Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']
 
 Route::group(['middleware' => 'auth'], function () {
     Route::post('order/update/status' , 'OrderController@updateStatus')->name('order.update.status');
+    Route::post('order/update/product/status' , 'OrderController@updateProductStatus')->name('order.update.product.status');
 });
 
 

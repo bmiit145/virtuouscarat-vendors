@@ -10,11 +10,17 @@
           max-height: 100px;
           margin: 2px;
         }
+        label{
+          color: black
+        }
 </style>
 <div class="card">
-    <h5 class="card-header">Add Product</h5>
+    <h5 class="card-header align-items-center">
+        <span> Add Product </span>
+        <a href="{{route('product.index')}}" class="btn btn-sm btn-primary shadow-sm float-right">Back</a>
+    </h5>
     <div class="card-body">
-      <form method="post" action="{{route('product.store')}}" enctype="multipart/form-data">
+      <form method="post" action="{{route('product.store')}}" id="productForm" enctype="multipart/form-data">
         {{csrf_field()}}
         <div class="form-group">
           <label for="category_id">Category <span class="text-danger">*</span></label>
@@ -26,15 +32,15 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label for="inputTitle" class="col-form-label">Product Name <span class="text-danger">*</span></label>
-          <input id="inputTitle" type="text" name="prod_name" placeholder="Enter Product Name"  value="{{old('prod_name')}}" class="form-control">
-          @error('prod_name')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
+    {{--        <div class="form-group">--}}
+    {{--          <label for="inputTitle" class="col-form-label">Product Name <span class="text-danger">*</span></label>--}}
+    {{--          <input id="inputTitle" type="text" name="prod_name" placeholder="Enter Product Name"  value="{{old('prod_name')}}" class="form-control">--}}
+    {{--          @error('prod_name')--}}
+    {{--          <span class="text-danger">{{$message}}</span>--}}
+    {{--          @enderror--}}
+    {{--        </div>--}}
 
-        
+
         <div class="form-group">
           <label for="description" class="col-form-label">Description</label>
           <textarea class="form-control" id="description" name="description">{{old('description')}}</textarea>
@@ -45,7 +51,7 @@
 
 
         <div class="form-group">
-          <label for="short_desc" class="col-form-label">Short Description<span class="text-danger">*</span></label>
+          <label for="short_desc" class="col-form-label">Short Description</label>
           <textarea class="form-control" id="short_desc" name="short_desc">{{old('short_desc')}}</textarea>
           @error('short_desc')
           <span class="text-danger">{{$message}}</span>
@@ -56,11 +62,11 @@
 
         {{-- <div class="form-group">
           <label for="is_featured">Is Featured</label><br>
-          <input type="checkbox" name='is_featured' id='is_featured' value='1' checked> Yes                        
+          <input type="checkbox" name='is_featured' id='is_featured' value='1' checked> Yes
         </div> --}}
-              
+
         {{-- {{$categories}} --}}
-        
+
 
         {{-- <div class="form-group d-none" id="child_cat_div">
           <label for="child_cat_id">Sub Category</label>
@@ -72,34 +78,79 @@
           </select>
         </div> --}}
 
-        <div class="form-group">
-          <label for="price" class="col-form-label">Regular Price($) <span class="text-danger">*</span></label>
-          <input id="price" type="number" name="price" placeholder="Enter price" min="0"  value="{{old('price')}}" class="form-control">
-          @error('price')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
+{{--        <div class="form-group">--}}
+{{--          <label for="price" class="col-form-label">List Price(₹) <span class="text-danger">*</span></label>--}}
+{{--          <input id="price" type="number" name="price" placeholder="Enter price" min="0"  value="{{old('price')}}" class="form-control">--}}
+{{--          @error('price')--}}
+{{--          <span class="text-danger">{{$message}}</span>--}}
+{{--          @enderror--}}
+{{--        </div>--}}
 
-        <div class="form-group">
-          <label for="sale_price" class="col-form-label">Sale Price($)</label>
-          <input id="sale_price" type="number" name="sale_price" min="0" placeholder="Enter Sale Price"  value="{{old('sale_price')}}" class="form-control">
-          @error('sale_price')
-          <span class="text-danger">{{$message}}</span>
-          @enderror
-        </div>
+{{--        <div class="form-group">--}}
+{{--          <label for="sale_price" class="col-form-label">Sale Price(₹)</label>--}}
+{{--          <input id="sale_price" type="number" name="sale_price" min="0" placeholder="Enter Sale Price"  value="{{old('sale_price')}}" class="form-control">--}}
+{{--          @error('sale_price')--}}
+{{--          <span class="text-danger">{{$message}}</span>--}}
+{{--          @enderror--}}
+{{--        </div>--}}
+
+            <div class="form-group">
+                <label for="CTS" class="col-form-label">Carat Weight<span class="text-danger">*</span></label>
+                <input id="CTS" type="number" name="CTS" min="0" placeholder="Enter Sale Price"  value="{{old('CTS')}}" class="form-control" step="any">
+                @error('CTS')
+                  <span class="text-danger">{{$message}}</span>
+                @enderror
+            </div>
+            <div class="form-group">
+                <label for="RAP" class="col-form-label">RAP ( Rate Per Carat ($) )<span class="text-danger">*</span></label>
+                <input id="RAP" type="number" name="RAP" min="0" placeholder="Enter Sale Price"  value="{{old('RAP')}}" class="form-control" step="any">
+                @error('RAP')
+                  <span class="text-danger">{{$message}}</span>
+                @enderror
+            </div>
+          <div class="form-group">
+              <label for="total_price" class="col-form-label font-weight-bold text-primary">
+                  Total Price: <span id="totalPriceLabel">$0</span>
+              </label>
+          </div>
+            <div class="form-group">
+                <label for="discount" class="col-form-label">Discount (%)</label>
+                <input id="discount" type="number" name="discount" min="0" max="100" placeholder="Enter Sale Price"  value="{{old('discount' , 0)}}" class="form-control" step="any">
+                @error('discount')
+                  <span class="text-danger">{{$message}}</span>
+                @enderror
+            </div>
+          <div class="form-group">
+              <label for="discounted_price" class="col-form-label font-weight-bold text-primary">
+                  Discounted Price: <span id="discountedPriceLabel">$0</span>
+              </label><br/>
+{{--              <label for="listed_price" class="col-form-label font-weight-bold text-primary">--}}
+{{--                  Listed Price: <span id="listedPriceLabel">$0</span>--}}
+{{--              </label>--}}
+          </div>
 
       {{-- SKU --}}
 
         <div class="form-group">
-          <label for="sku" class="col-form-label">SKU <span class="text-danger">*</span></label>
+          <label for="sku" class="col-form-label">Certificate No. <span class="text-danger">*</span></label>
           <input id="sku" type="text" name="sku" placeholder="SKU"  value="{{old('sku')}}" class="form-control">
           @error('sku')
           <span class="text-danger">{{$message}}</span>
           @enderror
         </div>
 
+{{--          Quantity --}}
+
+{{--        <div class="form-group">--}}
+{{--          <label for="quantity" class="col-form-label">Quantity <span class="text-danger">*</span></label>--}}
+{{--          <input id="number" type="number" name="quantity" placeholder="Quantity"  value="{{old('quantity')}}" class="form-control">--}}
+{{--          @error('quantity')--}}
+{{--          <span class="text-danger">{{$message}}</span>--}}
+{{--          @enderror--}}
+{{--        </div>--}}
+
         {{-- Stock Status --}}
-        <label class="col-form-label">Stock Status <span class="text-danger">*</span></label>
+        {{-- <label class="col-form-label">Stock Status <span class="text-danger">*</span></label>
         <div class="container mt-4">
           <div class="form-group">
               <div class="form-check">
@@ -125,55 +176,69 @@
               <label for="quantity" class="col-form-label">Quantity</label>
               <input type="number" class="form-control" name="quantity" id="quantity" min="1">
           </div>
-      </div>
+      </div> --}}
 
-      
+
       <div class="form-group">
         <label for="IGI_certificate" class="col-form-label">IGI Certificate link<span class="text-danger">*</span></label>
         <input id="IGI_certificate" type="text" name="IGI_certificate" placeholder="IGI Certificate Link"  value="{{old('IGI_cert')}}" class="form-control">
-        @error('sku')
+        @error('IGI_certificate')
         <span class="text-danger">{{$message}}</span>
         @enderror
       </div>
 
 
       {{-- Attribute --}}
-    
+
       @php
       $attributes = [
           'Type' => 'Lab Grown Diamond',
-          'Shape' => 'Round Brilliant',
-          'Carat Weight' => '0.38 ct',
-          'Cut' => 'Ideal',
-          'Colour' => 'E',
-          'Clarity' => 'VS1',
-          'Fluorescence' => 'None',
-          'Availability' => 'Online Only',
-          'Growth Method' => 'CVD',
-          'Polish' => 'Excellent',
-          'Symmetry' => 'Excellent',
-          'Table' => '56.5%',
-          'Depth' => '62.5%',
-          'Ratio' => '1.01'
+          'LAB' => '',
+          'Shape' => '',
+          'Carat Weight' => '',
+          'Cut' => '',
+          'Color' => '',
+          'Fancy Color' => '',
+          'Fancy Color Intensity' => '',
+          'Fancy Color Overtone' => '',
+          'Clarity' => '',
+          'Fluorescence' => '',
+//          'Growth Method' => '',
+          'Growth Type' => '',
+          'Polish' => '',
+          'Symmetry' => '',
+          'Measurement' => '',
+          'Table' => '',
+          'Depth' => '',
+          'Ratio' => '',
+          //'BGM' => '',
+          'Laser Inscription' => '',
+          'Member Comments' => '',
+          //'Pair' => '',
+          'H&A' => '',
+          'Eye Clean' => '',
+          'LOCATION' => '',
+          'MILKY' => '',
+          'LUSTER' => ''
       ];
-  @endphp
-
-<hr/>
-<h5> Attributes </h3>
-<div class="row">
-  @foreach ($attributes as $attribute => $value)
-      <div class="col-md-4">
-          <div class="form-group">
-              <label for="{{ str_replace(' ', '_', strtolower($attribute)) }}">{{ $attribute }}</label>
-              <input type="text" class="form-control" name="attributes[{{ $attribute }}]" id="{{ str_replace(' ', '_', strtolower($attribute)) }}" value="{{ old('attributes.' . $attribute, $value) }}">
+      @endphp
+  <hr/>
+  <h5> Attributes </h5>
+    <div class="row">
+      @foreach ($attributes as $attribute => $value)
+          <div class="col-md-4">
+              <div class="form-group">
+                  <label for="{{ str_replace(' ', '_', strtolower($attribute)) }}">{{ $attribute }}</label>
+                  <input type="text" class="form-control" name="attributes[{{ $attribute }}]" id="{{ str_replace(' ', '_', strtolower($attribute)) }}" value="{{ old('attributes.' . $attribute, $value) }}"
+                         @if ($attribute === 'Type' || $attribute == 'Carat Weight') readonly @endif>
+              </div>
           </div>
-      </div>
-      
-      @if (($loop->iteration % 3) == 0 && !$loop->last)
-          </div><div class="row">
-      @endif
-  @endforeach
-</div>
+
+          @if (($loop->iteration % 3) == 0 && !$loop->last)
+              </div><div class="row">
+          @endif
+      @endforeach
+  </div>
 
 
 
@@ -256,6 +321,9 @@
   <input type="file" id="imageInput" accept="image/*" style="display: none;" name="photo" onchange="previewImage(event)">
   <div id="holder" style="margin-top: 15px; max-height: 100px;"></div>
   <span id="error" class="text-danger"></span>
+  @error('photo')
+        <span class="text-danger">{{$message}}</span>
+  @enderror
 </div>
 
 <!-- Image Gallery Input -->
@@ -271,8 +339,17 @@
   </div>
   <input type="file" id="galleryInput" accept="image/*" style="display: none;" name="gallery[]" multiple onchange="previewGalleryImages(event)">
   <div id="galleryHolder" style="margin-top: 15px; max-height: 100px;"></div>
-  <span id="galleryError" class="text-danger"></span>
+  @error('gallery.*')
+        <span class="text-danger">{{$message}}</span>
+  @enderror
 </div>
+      <div class="form-group">
+          <label for="video_link" class="col-form-label">Video Link<span class="text-danger">*</span></label>
+          <input id="video_link" type="text" name="video_link" placeholder="Video Link"  value="{{old('video_link')}}" class="form-control">
+          @error('video_link')
+          <span class="text-danger">{{$message}}</span>
+          @enderror
+      </div>
 
 
         {{-- <div class="form-group">
@@ -292,6 +369,7 @@
       </form>
     </div>
 </div>
+
 
 @endsection
 
@@ -407,7 +485,7 @@
   function toggleQuantityField() {
       var inStock = document.getElementById('inStock').checked;
       var quantityField = document.getElementById('quantityField');
-      
+
       if (inStock) {
           quantityField.style.display = 'block';
       } else {
@@ -415,4 +493,84 @@
       }
   }
 </script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
+<script>
+  // validation for form as jquery
+  $(document).ready(function() {
+      $('#productForm').validate({
+          rules: {
+              category_id: {
+                  required: true
+              },
+              prod_name: {
+                  required: true
+              },
+              price: {
+                  required: true
+              },
+              sku: {
+                  required: true
+              },
+              photo: {
+                  required: true
+              },
+              gallery: {
+                  required: true
+              }
+          },
+          messages: {
+              category_id: {
+                  required: 'Please select a category'
+              },
+              prod_name: {
+                  required: 'Please enter product name'
+              },
+              price: {
+                  required: 'Please enter price'
+              },
+              sku: {
+                  required: 'Please enter SKU'
+              },
+              photo: {
+                  required: 'Please select a main photo'
+              },
+              gallery: {
+                  required: 'Please select at least one image for gallery'
+              }
+          }
+      });
+  });
+</script> -->
+
+    <script>
+        // Calculate total price
+        function calculateTotalPrice() {
+            var CTS = parseFloat(document.getElementById('CTS').value) || 0;
+            var RAP = parseFloat(document.getElementById('RAP').value) || 0;
+            var discount = parseFloat(document.getElementById('discount').value) || 0;
+
+            var totalPrice = CTS * RAP;
+            var discountedPrice = totalPrice - (totalPrice * discount / 100);
+            var listedPrice = discountedPrice + (discountedPrice * 10 / 100);
+
+            document.getElementById('totalPriceLabel').innerText = '$' + totalPrice.toFixed(2);
+            document.getElementById('discountedPriceLabel').innerText = '$' + discountedPrice.toFixed(2);
+            document.getElementById('listedPriceLabel').innerText = '$' + listedPrice.toFixed(2);
+        }
+
+        // Calculate total price on input change
+        document.getElementById('CTS').addEventListener('input', calculateTotalPrice);
+        document.getElementById('RAP').addEventListener('input', calculateTotalPrice);
+        document.getElementById('discount').addEventListener('input', calculateTotalPrice);
+
+        // Calculate total price on page load
+        calculateTotalPrice();
+
+
+        // show Caret Weight at attribute
+        document.getElementById('CTS').addEventListener('input', function() {
+            var CTS = parseFloat(document.getElementById('CTS').value) || 0;
+            document.getElementById('carat_weight').value = CTS + ' ct';
+        });
+    </script>
 @endpush

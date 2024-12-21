@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\WpOrder;
+use App\Models\WpOrderProduct;
+use App\Models\WpProduct;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Order;
@@ -24,16 +27,77 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index( Request $request)
     {
-        $orders=WpOrder::
-            whereIn('fullfilled_status',[2 , 3 , 5])
+        $query=WpOrder::whereIn('fullfilled_status',[2 , 3 , 5 , 6 , 7])
             ->whereHas('products.product' , function($query){
             $query->where('vendor_id',auth()->user()->id);
-        })
-        ->orderBy('id','DESC')->paginate(10);
+        });
 
-        return view('backend.order.index')->with('orders',$orders);
+                    // date
+                    if ($request->has('start_date') && $request->start_date) {
+                        $query->whereDate('order_date', '>=', $request->start_date);
+                    }
+                    if ($request->has('end_date') && $request->end_date) {
+                        $query->whereDate('order_date', '<=', $request->end_date);
+                    }
+        
+                    // status
+                     if ($request->has('status') && $request->status) {
+                         $statusMap = [
+                             'pending' => 0,
+                             'approved_by_vendor' => 1,
+                             'pending_by_vendor' => 2,
+                             'rejected' => 4,
+                             'rejected_by_vendor' => 5,
+                             'cancelled' => 7,
+                         ];
+        
+                         $reqStatus = $statusMap[$request->status] ?? null;
+        
+                         if ($reqStatus !== null) {
+                             $query->where('fullfilled_status', $reqStatus);
+                         }
+                     }
+
+                     
+            // Apply min_weight filter
+            if ($request->has('min_weight') && $request->min_weight) {
+                $query->whereHas('products.product', function ($q) use ($request) {
+                        $q->where('CTS', '>=', $request->min_weight);
+                });
+            }
+
+            // Apply max_weight filter
+            if ($request->has('max_weight') && $request->max_weight) {
+                $query->whereHas('products.product', function ($q) use ($request) {
+                        $q->where('CTS', '<=', $request->max_weight);
+                });
+            }
+            
+            
+            // category filter
+            if ($request->has('category') && $request->category) {
+                $query->whereHas('products.product', function ($q) use ($request) {
+                    $q->where('category_id', $request->category);
+                });
+            }
+
+
+        $orders = $query->orderBy('order_date','DESC')
+        ->orderBy('order_id','DESC')->paginate(10);
+
+        // Get unique category IDs
+        $FilterCategoryIds = WpProduct::whereIn('wp_product_id', function ($subQuery) use ($query) {
+            $subQuery->select('product_id')
+                ->from('wp_order_products')
+                ->whereIn('order_id', $query->pluck('order_id'));
+        })->distinct()->pluck('category_id');
+
+        // Get full category details
+        $FilterCategories = Category::whereIn('id', $FilterCategoryIds)->get();
+        
+        return view('backend.order.index')->with('orders',$orders)->with('FilterCategories', $FilterCategories);
     }
 
     /**
@@ -371,5 +435,53 @@ class OrderController extends Controller
         else{
             return response()->json(['status'=>'error','message'=>'Error while updating order status']);
         }
+    }
+
+
+    public function updateProductStatus(Request $request){
+
+        $wpOrderProduct = WpOrderProduct::where('order_id', $request->order_id)
+        ->where('product_id', $request->product_id)
+        ->first();
+
+    if (!$wpOrderProduct) {
+        return response()->json(['status' => 'error', 'message' => 'Product not found']);
+    }
+
+    $wpOrderProduct->is_fulfilled = $request->status;
+    $wpOrderProduct->save();
+
+    $order = WpOrder::where('order_id', $request->order_id)->first();
+    if (!$order) {
+        return response()->json(['status' => 'error', 'message' => 'Order not found']);
+    }
+
+    $totalProducts = $order->products()->count();
+    $fulfilledProducts = $order->products()->where('is_fulfilled', 1)->count();
+    $rejectedProducts = $order->products()->where('is_fulfilled', 2)->count();
+
+    if ($totalProducts == $fulfilledProducts) {
+        $order->fullfilled_status = 3; // All products fulfilled
+    } elseif ($totalProducts == $rejectedProducts) {
+        $order->fullfilled_status = 5; // All products rejected
+    } else {
+        $order->fullfilled_status = 6; // Partially fulfilled
+    }
+
+    $order->save();
+
+
+    if($order->fullfilled_status == 3){
+        $status_woocommerce = 'completed';
+    }else if($order->fullfilled_status == 5){
+        $status_woocommerce = 'cancelled';
+    }
+
+    if ($order->fullfilled_status == 3 || $order->fullfilled_status == 5) {
+        $res = updateOrderStatusInWooCommerce($request->order_id, $status_woocommerce);
+    }
+
+    return response()->json(['status' => 'success', 'message' => 'Product status updated successfully']);
+
     }
 }

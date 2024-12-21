@@ -13,7 +13,7 @@
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
+    <div id="content-wrapper" class="d-flex flex-column" style="min-height: 100vh">
 
       <!-- Main Content -->
       <div id="content">
